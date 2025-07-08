@@ -18,9 +18,30 @@
     .quill-editor { height: 120px; margin-bottom: 12px; }
     img { max-width: 100%; border-radius: 8px; margin: 12px 0; }
     .page-builder-push { border: 2px dashed #2ecc40; padding: 12px; margin-bottom: 24px; }
+    
+    /* Classes específicas para cada tipo de container */
+    .push-1-col .col { flex: 1; }
+    .push-2-cols .col { flex: 1; }
+    .push-3-cols .col { flex: 1; }
+    .push-4-cols .col { flex: 1; }
+    .push-5-cols .col { flex: 1; }
+    
+    /* Responsividade */
     @media (max-width: 900px) {
       .row { flex-direction: column; }
       .col { width: 100%; }
+      .push-1-col .col,
+      .push-2-cols .col,
+      .push-3-cols .col,
+      .push-4-cols .col,
+      .push-5-cols .col { width: 100%; }
+    }
+    
+    @media (min-width: 901px) {
+      .push-2-cols .col { flex: 0 0 calc(50% - 8px); }
+      .push-3-cols .col { flex: 0 0 calc(33.333% - 8px); }
+      .push-4-cols .col { flex: 0 0 calc(25% - 8px); }
+      .push-5-cols .col { flex: 0 0 calc(20% - 8px); }
     }
   </style>
 </head>
@@ -53,6 +74,15 @@
       3: ['col-12 col-md-4 mb-4', 'col-12 col-md-4 mb-4', 'col-12 col-md-4 mb-4'],
       4: ['col-12 col-md-3 mb-4', 'col-12 col-md-3 mb-4', 'col-12 col-md-3 mb-4', 'col-12 col-md-3 mb-4'],
       5: ['col-12 col-md mb-4', 'col-12 col-md mb-4', 'col-12 col-md mb-4', 'col-12 col-md mb-4', 'col-12 col-md mb-4']
+    };
+
+    // Classes específicas para cada tipo de container
+    const containerClasses = {
+      1: 'push-1-col',
+      2: 'push-2-cols', 
+      3: 'push-3-cols',
+      4: 'push-4-cols',
+      5: 'push-5-cols'
     };
 
     function addContainer(cols) {
@@ -171,7 +201,8 @@
       const preview = document.getElementById('preview');
       let html = '<div class="page-builder-push"><div class="container">';
       containers.forEach((container) => {
-        html += `<div class="row">\n`;
+        const containerClass = containerClasses[container.cols];
+        html += `<div class="row ${containerClass}">\n`;
         container.blocks.forEach((col, colIdx) => {
           html += `<div class="${colClasses[container.cols][colIdx]}">\n`;
           col.forEach(block => {
@@ -190,7 +221,8 @@
     function generateCode() {
       let html = '<div class="page-builder-push"><div class="container">';
       containers.forEach((container) => {
-        html += `<div class="row">\n`;
+        const containerClass = containerClasses[container.cols];
+        html += `<div class="row ${containerClass}">\n`;
         container.blocks.forEach((col, colIdx) => {
           html += `<div class="${colClasses[container.cols][colIdx]}">\n`;
           col.forEach(block => {
