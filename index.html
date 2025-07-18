@@ -3,11 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <title>Pagebuilder Nuvemshop - Estrutura e Indicador</title>
-  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+  <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
   <style>
     body { font-family: Arial, sans-serif; margin: 32px; }
     .container-controls { margin-bottom: 24px; }
     .bloco { border: 1px solid #ddd; padding: 12px; margin-bottom: 12px; border-radius: 6px; background: #fafafa; }
+    .bloco img{
+      max-width: 200px;
+      height: auto;
+    }
     .row { display: flex; gap: 16px; margin-bottom: 24px; }
     .col { flex: 1; min-width: 0; }
     .preview { background: #f9f9f9; padding: 16px; border-radius: 6px; margin-top: 24px; }
@@ -26,6 +30,62 @@
     .push-4-cols .col { flex: 1; }
     .push-5-cols .col { flex: 1; }
     
+    /* Drag and Drop */
+    .draggable { cursor: move; }
+    .dragging { opacity: 0.5; }
+    .drop-zone { 
+      border: 2px dashed #3498db; 
+      background: #ecf0f1; 
+      min-height: 50px;
+      transition: all 0.2s ease;
+    }
+    .drop-zone.drag-over { 
+      background: #d5dbdb; 
+      border-color: #2980b9; 
+      transform: scale(1.02);
+      box-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
+    }
+    
+    /* Área de arrasto específica */
+    .drag-handle { 
+      background: #3498db; 
+      color: white; 
+      padding: 4px 8px; 
+      border-radius: 4px; 
+      cursor: move; 
+      font-size: 12px; 
+      margin-bottom: 8px; 
+      display: inline-block; 
+      user-select: none;
+    }
+    .drag-handle:hover { background: #2980b9; }
+    
+    /* Prevenir arrasto em elementos interativos */
+    .bloco textarea, .bloco input, .bloco button, .bloco .ql-editor {
+      pointer-events: auto;
+    }
+    
+    /* Indicador visual para zonas de drop */
+    .col {
+      position: relative;
+      min-height: 100px;
+    }
+    .col::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border: 2px dashed transparent;
+      pointer-events: none;
+      transition: all 0.2s ease;
+    }
+    .col.drag-over::before {
+      border-color: #3498db;
+      background: rgba(52, 152, 219, 0.1);
+    }
+    
     /* Responsividade */
     @media (max-width: 900px) {
       .row { flex-direction: column; }
@@ -43,10 +103,61 @@
       .push-4-cols .col { flex: 0 0 calc(25% - 8px); }
       .push-5-cols .col { flex: 0 0 calc(20% - 8px); }
     }
+    
+    /* Área de colar código */
+    .paste-area { 
+      background: #f8f9fa; 
+      border: 2px dashed #6c757d; 
+      padding: 16px; 
+      margin-bottom: 24px; 
+      border-radius: 6px; 
+    }
+    .paste-area textarea { 
+      width: 100%; 
+      min-height: 100px; 
+      font-family: monospace; 
+      font-size: 12px; 
+    }
   </style>
 </head>
 <body>
   <h2>Construa sua descrição visualmente (estrutura e indicador)</h2>
+  
+  <!-- Área para colar código anterior -->
+  <div class="paste-area">
+    <h4>📋 Colar código anterior para reconstruir</h4>
+    <textarea id="pasteCode" placeholder="Cole aqui o código HTML gerado anteriormente..."><div class="page-builder-push">
+<div class="container">
+<div class="row push-2-cols">
+<div class="col-12 col-md-6 mb-4"><img alt="Imagem" src="https://images.tcdn.com.br/img/img_prod/1303097/noticia_7263443966878f1375bc29.png" /></div>
+
+<div class="col-12 col-md-6 mb-4">
+<h2>FAM&Iacute;LIA CORRE: conhe&ccedil;a os 5 t&ecirc;nis da Olympikus que v&atilde;o revolucionar seu treino</h2>
+
+<p>A linha CORRE, da Olympikus, tem t&ecirc;nis para corredores de todos os perfis &mdash; dos iniciantes aos ultramaratonistas. S&atilde;o cinco modelos com foco em conforto, performance, amortecimento e tecnologia de &uacute;ltima gera&ccedil;&atilde;o. No post de hoje, vamos apresentar cada um deles, destacando suas principais caracter&iacute;sticas, para quem s&atilde;o indicados e, claro: mostrar que voc&ecirc; encontra todos na Hermelu Esportes, pronta para te ajudar a acelerar sua evolu&ccedil;&atilde;o.</p>
+</div>
+</div>
+
+<div class="row push-2-cols">
+<div class="col-12 col-md-6 mb-4">
+<h2>1. CORRE 4: leveza e conforto para o dia a dia</h2>
+
+<p>O modelo Corre 4 &eacute; ideal para quem busca um t&ecirc;nis leve e confort&aacute;vel para treinos frequentes, tanto para iniciantes quanto para corredores intermedi&aacute;rios. Com tecnologia EVAsense no colarinho e entressola, oferece excelente absor&ccedil;&atilde;o de impacto enquanto mant&eacute;m o cal&ccedil;ado macio e responsivo.</p>
+
+<ul>
+	<li>Amortecimento EVAsense: espuma com densidade balanceada para pisadas suaves.</li>
+	<li>Cabedal respir&aacute;vel: mant&eacute;m os p&eacute;s secos durante treinos di&aacute;rios.</li>
+	<li>Peso leve e design clean, &oacute;timo pro uso urbano e corridas de m&eacute;dia dist&acirc;ncia.</li>
+</ul>
+</div>
+
+<div class="col-12 col-md-6 mb-4"><img alt="Imagem" src="https://images.tcdn.com.br/img/editor/up/1303097/Strategic.png" /></div>
+</div>
+</div>
+</div></textarea>
+    <button onclick="parsePastedCode()" class="copiar">Reconstruir a partir do código</button>
+  </div>
+  
   <div class="container-controls">
     <button onclick="addContainer(1)">Container 1 Coluna</button>
     <button onclick="addContainer(2)">Container 2 Colunas</button>
@@ -62,10 +173,20 @@
   <h3>Código HTML</h3>
   <textarea id="output" rows="18" readonly></textarea>
 
-  <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+  <script src="https://cdn.quilljs.com/1.3.7/quill.js"></script>
   <script>
+    // Suprimir avisos de depreciação do Quill
+    const originalWarn = console.warn;
+    console.warn = function(...args) {
+      if (args[0] && typeof args[0] === 'string' && args[0].includes('DOMNodeInserted')) {
+        return; // Suprimir avisos de depreciação do Quill
+      }
+      originalWarn.apply(console, args);
+    };
+    
     let containers = [];
     let quillInstances = {};
+    let draggedElement = null;
 
     // Classes para colunas responsivas e espaçamento
     const colClasses = {
@@ -106,7 +227,11 @@
           content: 'https://via.placeholder.com/400x300?text=Imagem'
         });
       } else {
-        containers[containerIdx].blocks[colIdx].push({ type, content: "" });
+        // Sempre usar HTML avançado para texto
+        containers[containerIdx].blocks[colIdx].push({
+          type: 'html',
+          content: '<p>Digite seu texto aqui...</p>'
+        });
       }
       renderBuilder();
     }
@@ -126,24 +251,126 @@
       renderBuilder();
     }
 
+    // Função para colar código anterior
+    function parsePastedCode() {
+      const pastedCode = document.getElementById('pasteCode').value.trim();
+      if (!pastedCode) {
+        alert('Por favor, cole o código HTML primeiro!');
+        return;
+      }
+
+      try {
+        // Decodificar entidades HTML
+        const decodedCode = pastedCode
+          .replace(/&amp;/g, '&')
+          .replace(/&lt;/g, '<')
+          .replace(/&gt;/g, '>')
+          .replace(/&quot;/g, '"')
+          .replace(/&#39;/g, "'")
+          .replace(/&nbsp;/g, ' ')
+          .replace(/&iacute;/g, 'í')
+          .replace(/&ccedil;/g, 'ç')
+          .replace(/&ecirc;/g, 'ê')
+          .replace(/&atilde;/g, 'ã')
+          .replace(/&oacute;/g, 'ó')
+          .replace(/&aacute;/g, 'á')
+          .replace(/&eacute;/g, 'é')
+          .replace(/&uacute;/g, 'ú')
+          .replace(/&Aacute;/g, 'Á')
+          .replace(/&Eacute;/g, 'É')
+          .replace(/&Iacute;/g, 'Í')
+          .replace(/&Oacute;/g, 'Ó')
+          .replace(/&Uacute;/g, 'Ú')
+          .replace(/&Ccedil;/g, 'Ç')
+          .replace(/&Atilde;/g, 'Ã')
+          .replace(/&Ecirc;/g, 'Ê')
+          .replace(/&Ocirc;/g, 'Ô')
+          .replace(/&mdash;/g, '—')
+          .replace(/&reg;/g, '®');
+
+        // Criar um parser temporário
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(decodedCode, 'text/html');
+        
+        // Limpar containers existentes
+        containers = [];
+        
+        // Procurar por containers
+        const containerRows = doc.querySelectorAll('.page-builder-push .row');
+        
+        containerRows.forEach(row => {
+          // Determinar número de colunas
+          const cols = row.children.length;
+          if (cols >= 1 && cols <= 5) {
+            const container = {
+              cols,
+              blocks: Array.from({ length: cols }, () => [])
+            };
+            
+            // Processar cada coluna
+            Array.from(row.children).forEach((col, colIdx) => {
+              let hasImage = false;
+              let textContent = '';
+              
+              // Processar elementos dentro da coluna
+              Array.from(col.children).forEach(element => {
+                if (element.tagName === 'IMG') {
+                  // Adicionar imagem como bloco separado
+                  container.blocks[colIdx].push({
+                    type: 'image',
+                    content: element.src
+                  });
+                  hasImage = true;
+                } else if (element.innerHTML.trim()) {
+                  // Acumular todo o conteúdo de texto em um único bloco HTML
+                  textContent += element.outerHTML;
+                }
+              });
+              
+              // Adicionar bloco de texto se houver conteúdo
+              if (textContent.trim()) {
+                container.blocks[colIdx].push({
+                  type: 'html',
+                  content: textContent
+                });
+              }
+            });
+            
+            containers.push(container);
+          }
+        });
+        
+        // console.log('Containers reconstruídos:', containers);
+        renderBuilder();
+        alert('Código reconstruído com sucesso!');
+        
+      } catch (error) {
+        alert('Erro ao processar o código. Verifique se o formato está correto.');
+        console.error(error);
+      }
+    }
+
+    // Funções de Drag and Drop - Agora integradas em initDragAndDrop()
+
     function renderBuilder() {
       const builder = document.getElementById('builder');
       builder.innerHTML = '';
       quillInstances = {}; // Reset
+      
+      // console.log('Renderizando builder com containers:', containers);
+      
       containers.forEach((container, cIdx) => {
         let html = `<div style="border:1px solid #bbb;padding:12px;border-radius:8px;margin-bottom:18px;position:relative;">
           <button type="button" onclick="removeContainer(${cIdx})" style="position:absolute;top:8px;right:8px;color:#e74c3c;">Remover Container</button>
           <div class="container"><div class="row">`;
         container.blocks.forEach((col, colIdx) => {
-          html += `<div class="${colClasses[container.cols][colIdx]} col">`;
+          html += `<div class="${colClasses[container.cols][colIdx]} col" data-container="${cIdx}" data-col="${colIdx}">`;
           col.forEach((block, bIdx) => {
-            html += `<div class="bloco">`;
-            if (block.type === 'text') {
-              html += `<label>Texto simples:</label>
-                <textarea onchange="updateBlock(${cIdx},${colIdx},${bIdx}, this.value)" oninput="updateBlock(${cIdx},${colIdx},${bIdx}, this.value)">${block.content}</textarea>`;
-            }
+            html += `<div class="bloco" data-container="${cIdx}" data-col="${colIdx}" data-block="${bIdx}">
+              <div class="drag-handle" draggable="true">⋮⋮ Arrastar</div>`;
             if (block.type === 'html') {
               const quillId = `quill-${cIdx}-${colIdx}-${bIdx}`;
+              // console.log(`Criando elemento HTML para bloco ${cIdx}-${colIdx}-${bIdx} com ID: ${quillId}`);
               html += `<label>Texto avançado (editor visual):</label>
                 <div id="${quillId}" class="quill-editor"></div>`;
             }
@@ -157,7 +384,6 @@
           });
           html += `
             <div>
-              <button type="button" onclick="addBlock(${cIdx},${colIdx},'text')">+ Texto simples</button>
               <button type="button" onclick="addBlock(${cIdx},${colIdx},'html')">+ Texto avançado (editor visual)</button>
               <button type="button" onclick="addBlock(${cIdx},${colIdx},'image')">+ Imagem</button>
             </div>
@@ -167,34 +393,195 @@
         html += `</div></div></div>`;
         builder.innerHTML += html;
       });
-      setTimeout(initQuillEditors, 100); // Espera DOM
+      
+      // console.log('HTML gerado, verificando elementos .quill-editor...');
+      // console.log('Elementos .quill-editor encontrados:', document.querySelectorAll('.quill-editor').length);
+      // document.querySelectorAll('.quill-editor').forEach((el, i) => {
+      //   console.log(`Elemento ${i}:`, el.id, el);
+      // });
+      
+      // Configurar drag and drop após renderizar
+      setTimeout(() => {
+        // console.log('Iniciando inicialização dos editores...');
+        initQuillEditors();
+        initDragAndDrop();
+      }, 300);
+      
       renderPreview();
     }
 
+    function initDragAndDrop() {
+      // console.log('Inicializando drag and drop...');
+      
+      // Configurar drag handles
+      document.querySelectorAll('.drag-handle').forEach(handle => {
+        const bloco = handle.closest('.bloco');
+        const containerIdx = parseInt(bloco.dataset.container);
+        const colIdx = parseInt(bloco.dataset.col);
+        const blockIdx = parseInt(bloco.dataset.block);
+        
+        // console.log(`Configurando drag handle: container ${containerIdx}, col ${colIdx}, block ${blockIdx}`);
+        
+        handle.addEventListener('dragstart', (e) => {
+          e.stopPropagation();
+          draggedElement = { containerIdx, colIdx, blockIdx };
+          bloco.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/plain', ''); // Necessário para Firefox
+          // console.log('Drag iniciado:', draggedElement);
+        });
+        
+        handle.addEventListener('dragend', (e) => {
+          e.stopPropagation();
+          bloco.classList.remove('dragging');
+          // console.log('Drag finalizado');
+          draggedElement = null;
+        });
+      });
+      
+      // Configurar zonas de drop nas colunas
+      document.querySelectorAll('.col').forEach(col => {
+        const containerIdx = parseInt(col.dataset.container);
+        const colIdx = parseInt(col.dataset.col);
+        
+        // console.log(`Configurando drop zone: container ${containerIdx}, col ${colIdx}`);
+        
+        col.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          col.classList.add('drag-over');
+          // console.log('Drag over coluna:', containerIdx, colIdx);
+        });
+        
+        col.addEventListener('dragleave', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (!col.contains(e.relatedTarget)) {
+            col.classList.remove('drag-over');
+            // console.log('Drag leave coluna:', containerIdx, colIdx);
+          }
+        });
+        
+        col.addEventListener('drop', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          col.classList.remove('drag-over');
+          
+          // console.log('Drop na coluna:', containerIdx, colIdx);
+          // console.log('Dragged element:', draggedElement);
+          
+          if (draggedElement) {
+            const { containerIdx: sourceContainer, colIdx: sourceCol, blockIdx } = draggedElement;
+            
+            // console.log(`Movendo bloco de container ${sourceContainer}, col ${sourceCol}, block ${blockIdx} para container ${containerIdx}, col ${colIdx}`);
+            
+            // Verificar se não está tentando mover para o mesmo local
+            if (sourceContainer === containerIdx && sourceCol === colIdx) {
+              // console.log('Tentando mover para o mesmo local, ignorando');
+              return;
+            }
+            
+            // Verificar se os índices são válidos
+            if (sourceContainer >= 0 && sourceCol >= 0 && blockIdx >= 0 && 
+                containerIdx >= 0 && colIdx >= 0 &&
+                containers[sourceContainer] && 
+                containers[sourceContainer].blocks[sourceCol] &&
+                containers[sourceContainer].blocks[sourceCol][blockIdx] &&
+                containers[containerIdx] &&
+                containers[containerIdx].blocks[colIdx]) {
+              
+              // Mover o bloco
+              const block = containers[sourceContainer].blocks[sourceCol][blockIdx];
+              containers[sourceContainer].blocks[sourceCol].splice(blockIdx, 1);
+              containers[containerIdx].blocks[colIdx].push(block);
+              
+              // console.log('Bloco movido com sucesso');
+              // console.log('Containers após movimento:', containers);
+              
+              renderBuilder();
+            } else {
+              // console.error('Índices inválidos para mover bloco');
+            }
+          }
+        });
+      });
+    }
+
     function initQuillEditors() {
-      document.querySelectorAll('.quill-editor').forEach(div => {
-        if (!quillInstances[div.id]) {
-          const [cIdx, colIdx, bIdx] = div.id.split('-').slice(1).map(Number);
-          const block = containers[cIdx].blocks[colIdx][bIdx];
+      // console.log('Inicializando editores Quill...');
+      // console.log('Elementos .quill-editor encontrados:', document.querySelectorAll('.quill-editor').length);
+      
+      // Limpar instâncias existentes
+      Object.keys(quillInstances).forEach(id => {
+        if (quillInstances[id]) {
+          quillInstances[id].destroy();
+        }
+      });
+      quillInstances = {};
+      
+      document.querySelectorAll('.quill-editor').forEach((div, index) => {
+        // console.log(`Processando editor ${index}:`, div.id, div);
+        
+        const [cIdx, colIdx, bIdx] = div.id.split('-').slice(1).map(Number);
+        const block = containers[cIdx].blocks[colIdx][bIdx];
+        
+        // console.log(`Inicializando Quill para ${div.id}:`, block);
+        // console.log(`Índices extraídos: cIdx=${cIdx}, colIdx=${colIdx}, bIdx=${bIdx}`);
+        
+        if (block && block.type === 'html') {
+          // console.log(`Criando editor Quill para ${div.id} com conteúdo:`, block.content.substring(0, 100) + '...');
+          
           const quill = new Quill(`#${div.id}`, {
             theme: 'snow',
             modules: {
               toolbar: [
-                [{ header: [1, 2, false] }],
-                ['bold', 'italic', 'underline'],
+                [{ 'header': [1, 2, 3, false] }],
+                ['bold', 'italic', 'underline', 'strike'],
+                [{ 'color': [] }, { 'background': [] }],
+                [{ 'align': [] }],
                 [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                ['link', 'clean']
+                [{ 'indent': '-1'}, { 'indent': '+1' }],
+                ['link', 'image', 'code-block'],
+                ['clean']
               ]
             }
           });
+          
+          // Carregar conteúdo no editor imediatamente
+          // console.log(`Carregando conteúdo imediatamente no ${div.id}`);
           quill.root.innerHTML = block.content;
+          
+          // Verificar se o conteúdo foi carregado
+          setTimeout(() => {
+            const loadedContent = quill.root.innerHTML;
+            // console.log(`Conteúdo carregado em ${div.id}:`, loadedContent.substring(0, 100) + '...');
+            // console.log(`Conteúdo original:`, block.content.substring(0, 100) + '...');
+            // console.log(`Elemento DOM do editor:`, quill.root);
+            
+            if (loadedContent.trim() !== block.content.trim()) {
+              // console.warn(`Conteúdo não carregado corretamente em ${div.id}`);
+              // console.warn(`Esperado:`, block.content.substring(0, 100));
+              // console.warn(`Obtido:`, loadedContent.substring(0, 100));
+              // Tentar novamente
+              quill.root.innerHTML = block.content;
+            } else {
+              // console.log(`✅ Conteúdo carregado corretamente em ${div.id}`);
+            }
+          }, 100);
+          
           quill.on('text-change', function() {
             block.content = quill.root.innerHTML;
             renderPreview();
           });
+          
           quillInstances[div.id] = quill;
+          // console.log(`✅ Editor Quill criado para ${div.id}`);
+        } else {
+          // console.log(`❌ Bloco não é do tipo HTML ou não existe:`, block);
         }
       });
+      
+      // console.log('Editores Quill criados:', Object.keys(quillInstances));
     }
 
     function renderPreview() {
@@ -206,7 +593,6 @@
         container.blocks.forEach((col, colIdx) => {
           html += `<div class="${colClasses[container.cols][colIdx]}">\n`;
           col.forEach(block => {
-            if (block.type === 'text') html += `<p>${block.content}</p>\n`;
             if (block.type === 'html') html += `${block.content}\n`;
             if (block.type === 'image') html += `<img src="${block.content}" alt="Imagem" />\n`;
           });
@@ -226,7 +612,6 @@
         container.blocks.forEach((col, colIdx) => {
           html += `<div class="${colClasses[container.cols][colIdx]}">\n`;
           col.forEach(block => {
-            if (block.type === 'text') html += `<p>${block.content}</p>\n`;
             if (block.type === 'html') html += `${block.content}\n`;
             if (block.type === 'image') html += `<img src="${block.content}" alt="Imagem" />\n`;
           });
@@ -236,6 +621,19 @@
       });
       html += '</div></div>';
       document.getElementById('output').value = html;
+    }
+
+    function debugContainers() {
+      // console.log('=== DEBUG CONTAINERS ===');
+      containers.forEach((container, cIdx) => {
+        // console.log(`Container ${cIdx}:`, container);
+        container.blocks.forEach((col, colIdx) => {
+          col.forEach((block, bIdx) => {
+            // console.log(`  Bloco ${cIdx}-${colIdx}-${bIdx}:`, block);
+          });
+        });
+      });
+      // console.log('=== FIM DEBUG ===');
     }
 
     function copyCode() {
