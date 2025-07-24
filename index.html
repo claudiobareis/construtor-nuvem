@@ -541,12 +541,200 @@
       transition: all 0.2s ease;
     }
 
-    .container-drop-zone.drag-over {
-      background: rgba(102, 126, 234, 0.1);
-      border-color: #5a6fd8;
-      transform: scale(1.02);
-      box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
-    }
+                .container-drop-zone.drag-over {
+              background: rgba(102, 126, 234, 0.1);
+              border-color: #5a6fd8;
+              transform: scale(1.02);
+              box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+            }
+
+            /* Estilos para botões de adicionar/remover colunas */
+            .btn-add-col, .btn-remove-col {
+              background: #17a2b8;
+              color: white;
+              border: none;
+              padding: 6px 12px;
+              border-radius: 15px;
+              font-size: 11px;
+              transition: all 0.3s ease;
+              cursor: pointer;
+              display: flex;
+              align-items: center;
+              gap: 4px;
+              margin: 0 2px;
+            }
+
+            .btn-add-col:hover {
+              background: #138496;
+              transform: scale(1.05);
+            }
+
+            .btn-remove-col {
+              background: #dc3545;
+            }
+
+            .btn-remove-col:hover {
+              background: #c82333;
+              transform: scale(1.05);
+            }
+
+            .btn-add-col:disabled, .btn-remove-col:disabled {
+              background: #e9ecef;
+              color: #6c757d;
+              cursor: not-allowed;
+              opacity: 0.6;
+            }
+
+            .btn-add-col:disabled:hover, .btn-remove-col:disabled:hover {
+              background: #e9ecef;
+              transform: none;
+            }
+
+
+
+            /* Menu flutuante de gerenciamento de dados */
+            .floating-menu {
+              position: fixed;
+              top: 10%;
+              right: 20px;
+              transform: translateY(-50%);
+              z-index: 1000;
+            }
+
+            .floating-menu-btn {
+              background: linear-gradient(45deg, #667eea, #764ba2);
+              color: white;
+              border: none;
+              padding: 15px 20px;
+              border-radius: 50px;
+              font-weight: 600;
+              transition: all 0.3s ease;
+              box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+              display: flex;
+              align-items: center;
+              gap: 10px;
+              cursor: pointer;
+              min-width: 180px;
+            }
+
+            .floating-menu-btn:hover {
+              transform: translateY(-2px);
+              box-shadow: 0 12px 35px rgba(0,0,0,0.2);
+              color: white;
+            }
+
+            .floating-menu-btn i {
+              font-size: 18px;
+            }
+
+            .floating-menu-dropdown {
+              position: absolute;
+              right: 0;
+              top: 100%;
+              background: white;
+              border-radius: 15px;
+              box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+              min-width: 250px;
+              opacity: 0;
+              visibility: hidden;
+              transform: translateY(-10px);
+              transition: all 0.3s ease;
+              margin-top: 10px;
+            }
+
+            .floating-menu-dropdown.show {
+              opacity: 1;
+              visibility: visible;
+              transform: translateY(0);
+            }
+
+            .dropdown-header {
+              background: linear-gradient(45deg, #667eea, #764ba2);
+              color: white;
+              padding: 15px 20px;
+              border-radius: 15px 15px 0 0;
+              text-align: center;
+            }
+
+            .dropdown-header h6 {
+              margin: 0;
+              font-weight: 600;
+              font-size: 16px;
+            }
+
+            .dropdown-content {
+              padding: 15px;
+            }
+
+            .dropdown-btn {
+              width: 100%;
+              padding: 12px 15px;
+              margin: 5px 0;
+              border: none;
+              border-radius: 10px;
+              font-weight: 600;
+              transition: all 0.3s ease;
+              display: flex;
+              align-items: center;
+              gap: 10px;
+              cursor: pointer;
+              font-size: 14px;
+            }
+
+            .dropdown-btn:hover {
+              transform: translateX(5px);
+            }
+
+            .dropdown-btn.btn-save {
+              background: linear-gradient(45deg, #28a745, #20c997);
+              color: white;
+            }
+
+            .dropdown-btn.btn-save:hover {
+              background: linear-gradient(45deg, #218838, #1ea085);
+              color: white;
+            }
+
+            .dropdown-btn.btn-load {
+              background: linear-gradient(45deg, #007bff, #0056b3);
+              color: white;
+            }
+
+            .dropdown-btn.btn-load:hover {
+              background: linear-gradient(45deg, #0056b3, #004085);
+              color: white;
+            }
+
+            .dropdown-btn.btn-clear {
+              background: linear-gradient(45deg, #dc3545, #c82333);
+              color: white;
+            }
+
+            .dropdown-btn.btn-clear:hover {
+              background: linear-gradient(45deg, #c82333, #a71e2a);
+              color: white;
+            }
+
+            /* Responsividade para o menu flutuante */
+            @media (max-width: 768px) {
+              .floating-menu {
+                right: 10px;
+              }
+              
+              .floating-menu-btn {
+                min-width: 60px;
+                padding: 15px;
+              }
+              
+              .floating-menu-btn span {
+                display: none;
+              }
+              
+              .floating-menu-dropdown {
+                min-width: 200px;
+                right: -70px;
+              }
+            }
   </style>
 </head>
 <body>
@@ -555,6 +743,8 @@
       <h2><i class="fas fa-paint-brush"></i> Pagebuilder Push Ecommerce</h2>
       <p>Construa sua descrição visualmente com estrutura e indicador</p>
     </div>
+
+
     
     <div class="container-controls">
       <div style="margin-bottom: 15px;">
@@ -610,6 +800,31 @@
       <button onclick="parsePastedCode()" class="btn-copiar">
         <i class="fas fa-magic"></i> Reconstruir a partir do código
       </button>
+    </div>
+
+    <!-- Menu flutuante de gerenciamento de dados -->
+    <div class="floating-menu">
+      <button class="floating-menu-btn" onclick="toggleDataMenu()">
+        <i class="fas fa-cog"></i>
+        <span>Gerenciar Dados</span>
+      </button>
+      
+      <div class="floating-menu-dropdown" id="dataMenuDropdown">
+        <div class="dropdown-header">
+          <h6><i class="fas fa-save"></i> Gerenciar Dados</h6>
+        </div>
+        <div class="dropdown-content">
+          <button onclick="saveToLocalStorage()" class="dropdown-btn btn-save">
+            <i class="fas fa-save"></i> Salvar Projeto
+          </button>
+          <button onclick="loadFromLocalStorage()" class="dropdown-btn btn-load">
+            <i class="fas fa-folder-open"></i> Carregar Projeto
+          </button>
+          <button onclick="clearLocalStorage()" class="dropdown-btn btn-clear">
+            <i class="fas fa-trash"></i> Limpar Dados
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -919,6 +1134,12 @@
               </button>
               <button type="button" onclick="moveContainerDown(${cIdx})" class="btn-move-down" ${cIdx === containers.length - 1 ? 'disabled' : ''}>
                 <i class="fas fa-arrow-down"></i> Descer
+              </button>
+              <button type="button" onclick="addColumnToContainer(${cIdx})" class="btn-add-col" ${container.cols >= 5 ? 'disabled' : ''}>
+                <i class="fas fa-plus"></i> + Coluna
+              </button>
+              <button type="button" onclick="removeColumnFromContainer(${cIdx})" class="btn-remove-col" ${container.cols <= 1 ? 'disabled' : ''}>
+                <i class="fas fa-minus"></i> - Coluna
               </button>
               <button type="button" onclick="removeContainer(${cIdx})" class="btn-remove">
                 <i class="fas fa-times"></i> Remover
@@ -1815,7 +2036,184 @@
       }, 2000);
     }
 
+    // Funções para adicionar/remover colunas em containers existentes
+    function addColumnToContainer(containerIdx) {
+      const container = containers[containerIdx];
+      if (container.cols >= 5) {
+        alert('Máximo de 5 colunas permitido!');
+        return;
+      }
+      
+      // Adicionar nova coluna vazia
+      container.blocks.push([]);
+      container.cols = container.blocks.length;
+      
+      renderBuilder();
+    }
+
+    function removeColumnFromContainer(containerIdx) {
+      const container = containers[containerIdx];
+      if (container.cols <= 1) {
+        alert('Mínimo de 1 coluna necessário!');
+        return;
+      }
+      
+      // Confirmar remoção se a coluna tem conteúdo
+      const lastColumn = container.blocks[container.blocks.length - 1];
+      if (lastColumn.length > 0) {
+        const confirmRemove = confirm(`A última coluna contém ${lastColumn.length} bloco(s). Deseja realmente removê-la? Todo o conteúdo será perdido.`);
+        if (!confirmRemove) {
+          return;
+        }
+      }
+      
+      // Remover a última coluna
+      container.blocks.pop();
+      container.cols = container.blocks.length;
+      
+      renderBuilder();
+    }
+
+    // Função para controlar o menu dropdown de dados
+    function toggleDataMenu() {
+      const dropdown = document.getElementById('dataMenuDropdown');
+      dropdown.classList.toggle('show');
+    }
+
+    // Fechar o menu quando clicar fora dele
+    document.addEventListener('click', function(event) {
+      const floatingMenu = document.querySelector('.floating-menu');
+      const dropdown = document.getElementById('dataMenuDropdown');
+      
+      if (!floatingMenu.contains(event.target) && dropdown.classList.contains('show')) {
+        dropdown.classList.remove('show');
+      }
+    });
+
+    // Funções para localStorage
+    function saveToLocalStorage() {
+      try {
+        const projectData = {
+          containers: containers,
+          timestamp: new Date().toISOString(),
+          version: '1.0'
+        };
+        
+        localStorage.setItem('pagebuilder_project', JSON.stringify(projectData));
+        
+        // Feedback visual
+        const button = event.target;
+        const originalText = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-check"></i> Salvo!';
+        button.style.background = '#28a745';
+        
+        setTimeout(() => {
+          button.innerHTML = originalText;
+          button.style.background = '';
+        }, 2000);
+        
+        console.log('Projeto salvo com sucesso!');
+      } catch (error) {
+        console.error('Erro ao salvar projeto:', error);
+        alert('Erro ao salvar projeto. Verifique se há espaço suficiente no navegador.');
+      }
+    }
+
+    function loadFromLocalStorage() {
+      try {
+        const savedData = localStorage.getItem('pagebuilder_project');
+        
+        if (!savedData) {
+          alert('Nenhum projeto salvo encontrado!');
+          return;
+        }
+        
+        const projectData = JSON.parse(savedData);
+        
+        if (!projectData.containers || !Array.isArray(projectData.containers)) {
+          alert('Dados do projeto corrompidos ou inválidos!');
+          return;
+        }
+        
+        // Confirmar carregamento se há containers existentes
+        if (containers.length > 0) {
+          const confirmLoad = confirm('Há containers existentes. Deseja substituí-los pelos dados salvos?');
+          if (!confirmLoad) {
+            return;
+          }
+        }
+        
+        containers = projectData.containers;
+        
+        // Feedback visual
+        const button = event.target;
+        const originalText = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-check"></i> Carregado!';
+        button.style.background = '#28a745';
+        
+        setTimeout(() => {
+          button.innerHTML = originalText;
+          button.style.background = '';
+        }, 2000);
+        
+        renderBuilder();
+        console.log('Projeto carregado com sucesso!');
+        
+        // Mostrar informações do projeto carregado
+        const timestamp = new Date(projectData.timestamp).toLocaleString('pt-BR');
+        alert(`Projeto carregado com sucesso!\n\nSalvo em: ${timestamp}\nContainers: ${containers.length}`);
+        
+      } catch (error) {
+        console.error('Erro ao carregar projeto:', error);
+        alert('Erro ao carregar projeto. Os dados podem estar corrompidos.');
+      }
+    }
+
+    function clearLocalStorage() {
+      const confirmClear = confirm('Tem certeza que deseja limpar todos os dados salvos? Esta ação não pode ser desfeita.');
+      
+      if (confirmClear) {
+        try {
+          localStorage.removeItem('pagebuilder_project');
+          
+          // Feedback visual
+          const button = event.target;
+          const originalText = button.innerHTML;
+          button.innerHTML = '<i class="fas fa-check"></i> Limpo!';
+          button.style.background = '#28a745';
+          
+          setTimeout(() => {
+            button.innerHTML = originalText;
+            button.style.background = '';
+          }, 2000);
+          
+          console.log('Dados limpos com sucesso!');
+          alert('Todos os dados salvos foram removidos com sucesso!');
+        } catch (error) {
+          console.error('Erro ao limpar dados:', error);
+          alert('Erro ao limpar dados.');
+        }
+      }
+    }
+
+    // Carregar projeto automaticamente ao iniciar (se existir)
+    function autoLoadProject() {
+      try {
+        const savedData = localStorage.getItem('pagebuilder_project');
+        if (savedData) {
+          const projectData = JSON.parse(savedData);
+          if (projectData.containers && Array.isArray(projectData.containers)) {
+            containers = projectData.containers;
+            console.log('Projeto carregado automaticamente do localStorage');
+          }
+        }
+      } catch (error) {
+        console.error('Erro ao carregar projeto automaticamente:', error);
+      }
+    }
+
     // Render inicial
+    autoLoadProject();
     renderBuilder();
   </script>
 </body>
