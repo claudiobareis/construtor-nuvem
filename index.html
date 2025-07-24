@@ -3,25 +3,319 @@
 <head>
   <meta charset="UTF-8">
   <title>Pagebuilder Nuvemshop - Estrutura e Indicador</title>
-  <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.quilljs.com/2.0.0-dev.2/quill.snow.css" rel="stylesheet">
+  <link href="https://cdn.quilljs.com/2.0.0-dev.2/quill.bubble.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
-    body { font-family: Arial, sans-serif; margin: 32px; }
-    .container-controls { margin-bottom: 24px; }
-    .bloco { border: 1px solid #ddd; padding: 12px; margin-bottom: 12px; border-radius: 6px; background: #fafafa; }
-    .bloco img{
-      max-width: 200px;
-      height: auto;
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px 0;
     }
-    .row { display: flex; gap: 16px; margin-bottom: 24px; }
-    .col { flex: 1; min-width: 0; }
-    .preview { background: #f9f9f9; padding: 16px; border-radius: 6px; margin-top: 24px; }
-    textarea, input[type="text"] { width: 100%; margin-top: 6px; margin-bottom: 12px; }
-    button { margin-right: 8px; margin-bottom: 8px; }
-    .copiar { background: #2ecc40; color: #fff; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; }
-    .info { font-size: 13px; color: #555; margin-bottom: 8px; }
-    .quill-editor { height: 120px; margin-bottom: 12px; }
-    img { max-width: 100%; border-radius: 8px; margin: 12px 0; }
-    .page-builder-push { border: 2px dashed #2ecc40; padding: 12px; margin-bottom: 24px; }
+    
+    .main-container {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      padding: 30px;
+      margin: 20px auto;
+      max-width: 1400px;
+    }
+    
+    .page-header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #f8f9fa;
+    }
+    
+    .page-header h2 {
+      color: #2c3e50;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    
+    .page-header p {
+      color: #7f8c8d;
+      font-size: 16px;
+    }
+    
+    .container-controls {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    
+    .btn-container {
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 25px;
+      margin: 5px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    .btn-container:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      color: white;
+    }
+    
+    .btn-container:active {
+      transform: translateY(0);
+    }
+    
+    .container-item {
+      background: white;
+      border: 2px solid #e9ecef;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 25px;
+      position: relative;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+    
+    .container-item:hover {
+      border-color: #667eea;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+    
+    .container-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #e9ecef;
+    }
+    
+    .container-title {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 18px;
+    }
+    
+    .btn-remove {
+      background: #e74c3c;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-remove:hover {
+      background: #c0392b;
+      color: white;
+      transform: scale(1.05);
+    }
+    
+    .bloco {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      padding: 20px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+    
+    .bloco:hover {
+      border-color: #667eea;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    .drag-handle { 
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      color: white; 
+      padding: 8px 12px; 
+      border-radius: 20px; 
+      cursor: move; 
+      font-size: 12px; 
+      margin-bottom: 15px; 
+      display: inline-block;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    .drag-handle:hover { 
+      background: linear-gradient(45deg, #5a6fd8, #6a4190);
+      transform: scale(1.05);
+    }
+    
+    .form-label {
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 8px;
+    }
+    
+    .form-control {
+      border-radius: 8px;
+      border: 2px solid #e9ecef;
+      padding: 12px;
+      transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+    
+    .btn-add {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 25px;
+      margin: 5px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    .btn-add:hover {
+      background: #218838;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+    
+    .btn-remove-block {
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 15px;
+      font-size: 11px;
+      transition: all 0.3s ease;
+      float: right;
+    }
+    
+    .btn-remove-block:hover {
+      background: #c82333;
+      color: white;
+      transform: scale(1.05);
+    }
+    
+    .preview { 
+      background: #f8f9fa; 
+      padding: 25px; 
+      border-radius: 12px; 
+      margin-top: 30px;
+      border: 2px solid #e9ecef;
+    }
+    
+    .preview h3 {
+      color: #2c3e50;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+    
+    .page-builder-push { 
+      border: 3px dashed #667eea; 
+      padding: 20px; 
+      margin-bottom: 30px;
+      border-radius: 12px;
+      background: rgba(102, 126, 234, 0.05);
+    }
+    
+    .paste-area { 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none; 
+      padding: 25px; 
+      margin-top: 30px; 
+      border-radius: 15px;
+      color: white;
+    }
+    
+    .paste-area h4 {
+      color: white;
+      margin-bottom: 15px;
+      font-weight: 600;
+    }
+    
+    .paste-area textarea { 
+      width: 100%; 
+      min-height: 120px; 
+      font-family: 'Courier New', monospace; 
+      font-size: 13px;
+      border-radius: 8px;
+      border: none;
+      padding: 15px;
+    }
+    
+    .btn-copiar { 
+      background: #28a745; 
+      color: white; 
+      border: none; 
+      padding: 12px 24px; 
+      border-radius: 25px; 
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    .btn-copiar:hover {
+      background: #218838;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+    
+    .btn-generate {
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 25px;
+      font-weight: 600;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      margin: 10px;
+    }
+    
+    .btn-generate:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      color: white;
+    }
+    
+    .quill-editor { 
+      height: 150px; 
+      margin-bottom: 15px;
+      border-radius: 8px;
+    }
+    
+    /* Estilos básicos para tabelas no editor Quill */
+    .ql-editor table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 15px 0;
+    }
+    
+    .ql-editor table td,
+    .ql-editor table th {
+      padding: 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+    
+    img { 
+      max-width: 100%; 
+      border-radius: 8px; 
+      margin: 15px 0;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
     
     /* Classes específicas para cada tipo de container */
     .push-1-col .col { flex: 1; }
@@ -34,35 +328,16 @@
     .draggable { cursor: move; }
     .dragging { opacity: 0.5; }
     .drop-zone { 
-      border: 2px dashed #3498db; 
-      background: #ecf0f1; 
+      border: 2px dashed #667eea; 
+      background: rgba(102, 126, 234, 0.05); 
       min-height: 50px;
       transition: all 0.2s ease;
     }
     .drop-zone.drag-over { 
-      background: #d5dbdb; 
-      border-color: #2980b9; 
+      background: rgba(102, 126, 234, 0.1); 
+      border-color: #5a6fd8; 
       transform: scale(1.02);
-      box-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
-    }
-    
-    /* Área de arrasto específica */
-    .drag-handle { 
-      background: #3498db; 
-      color: white; 
-      padding: 4px 8px; 
-      border-radius: 4px; 
-      cursor: move; 
-      font-size: 12px; 
-      margin-bottom: 8px; 
-      display: inline-block; 
-      user-select: none;
-    }
-    .drag-handle:hover { background: #2980b9; }
-    
-    /* Prevenir arrasto em elementos interativos */
-    .bloco textarea, .bloco input, .bloco button, .bloco .ql-editor {
-      pointer-events: auto;
+      box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
     }
     
     /* Indicador visual para zonas de drop */
@@ -82,8 +357,8 @@
       transition: all 0.2s ease;
     }
     .col.drag-over::before {
-      border-color: #3498db;
-      background: rgba(52, 152, 219, 0.1);
+      border-color: #667eea;
+      background: rgba(102, 126, 234, 0.1);
     }
     
     /* Responsividade */
@@ -103,77 +378,127 @@
       .push-4-cols .col { flex: 0 0 calc(25% - 8px); }
       .push-5-cols .col { flex: 0 0 calc(20% - 8px); }
     }
-    
-    /* Área de colar código */
-    .paste-area { 
-      background: #f8f9fa; 
-      border: 2px dashed #6c757d; 
-      padding: 16px; 
-      margin-bottom: 24px; 
-      border-radius: 6px; 
+
+    /* Estilos para a nova estrutura de tabela */
+    .table-controls {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      border: 1px solid #dee2e6;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      align-items: center;
     }
-    .paste-area textarea { 
-      width: 100%; 
-      min-height: 100px; 
-      font-family: monospace; 
-      font-size: 12px; 
+
+    .table-controls button {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      margin: 2px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-weight: 500;
+    }
+
+    .table-controls button:hover {
+      background: #5a6fd8;
+      transform: scale(1.05);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .table-controls button.delete {
+      background: #dc3545;
+    }
+
+    .table-controls button.delete:hover {
+      background: #c82333;
+    }
+
+    .table-controls button.add {
+      background: #28a745;
+    }
+
+    .table-controls button.add:hover {
+      background: #218838;
+    }
+
+    .table-controls button.insert {
+      background: #17a2b8;
+    }
+
+    .table-controls button.insert:hover {
+      background: #138496;
+    }
+
+    .table-controls button i {
+      font-size: 11px;
     }
   </style>
 </head>
 <body>
-  <h2>Construa sua descrição visualmente (estrutura e indicador)</h2>
-  
-  <!-- Área para colar código anterior -->
-  <div class="paste-area">
-    <h4>📋 Colar código anterior para reconstruir</h4>
-    <textarea id="pasteCode" placeholder="Cole aqui o código HTML gerado anteriormente..."><div class="page-builder-push">
-<div class="container">
-<div class="row push-2-cols">
-<div class="col-12 col-md-6 mb-4"><img alt="Imagem" src="https://images.tcdn.com.br/img/img_prod/1303097/noticia_7263443966878f1375bc29.png" /></div>
-
-<div class="col-12 col-md-6 mb-4">
-<h2>FAM&Iacute;LIA CORRE: conhe&ccedil;a os 5 t&ecirc;nis da Olympikus que v&atilde;o revolucionar seu treino</h2>
-
-<p>A linha CORRE, da Olympikus, tem t&ecirc;nis para corredores de todos os perfis &mdash; dos iniciantes aos ultramaratonistas. S&atilde;o cinco modelos com foco em conforto, performance, amortecimento e tecnologia de &uacute;ltima gera&ccedil;&atilde;o. No post de hoje, vamos apresentar cada um deles, destacando suas principais caracter&iacute;sticas, para quem s&atilde;o indicados e, claro: mostrar que voc&ecirc; encontra todos na Hermelu Esportes, pronta para te ajudar a acelerar sua evolu&ccedil;&atilde;o.</p>
-</div>
-</div>
-
-<div class="row push-2-cols">
-<div class="col-12 col-md-6 mb-4">
-<h2>1. CORRE 4: leveza e conforto para o dia a dia</h2>
-
-<p>O modelo Corre 4 &eacute; ideal para quem busca um t&ecirc;nis leve e confort&aacute;vel para treinos frequentes, tanto para iniciantes quanto para corredores intermedi&aacute;rios. Com tecnologia EVAsense no colarinho e entressola, oferece excelente absor&ccedil;&atilde;o de impacto enquanto mant&eacute;m o cal&ccedil;ado macio e responsivo.</p>
-
-<ul>
-	<li>Amortecimento EVAsense: espuma com densidade balanceada para pisadas suaves.</li>
-	<li>Cabedal respir&aacute;vel: mant&eacute;m os p&eacute;s secos durante treinos di&aacute;rios.</li>
-	<li>Peso leve e design clean, &oacute;timo pro uso urbano e corridas de m&eacute;dia dist&acirc;ncia.</li>
-</ul>
-</div>
-
-<div class="col-12 col-md-6 mb-4"><img alt="Imagem" src="https://images.tcdn.com.br/img/editor/up/1303097/Strategic.png" /></div>
-</div>
-</div>
-</div></textarea>
-    <button onclick="parsePastedCode()" class="copiar">Reconstruir a partir do código</button>
+  <div class="main-container">
+    <div class="page-header">
+      <h2><i class="fas fa-paint-brush"></i> Pagebuilder Push Ecommerce</h2>
+      <p>Construa sua descrição visualmente com estrutura e indicador</p>
+    </div>
+    
+    <div class="container-controls">
+      <button onclick="addContainer(1)" class="btn-container">
+        <i class="fas fa-columns"></i> Container 1 Coluna
+      </button>
+      <button onclick="addContainer(2)" class="btn-container">
+        <i class="fas fa-columns"></i> Container 2 Colunas
+      </button>
+      <button onclick="addContainer(3)" class="btn-container">
+        <i class="fas fa-columns"></i> Container 3 Colunas
+      </button>
+      <button onclick="addContainer(4)" class="btn-container">
+        <i class="fas fa-columns"></i> Container 4 Colunas
+      </button>
+      <button onclick="addContainer(5)" class="btn-container">
+        <i class="fas fa-columns"></i> Container 5 Colunas
+      </button>
+    </div>
+    
+    <div id="builder"></div>
+    
+    <div class="text-center">
+      <button onclick="generateCode()" class="btn-generate">
+        <i class="fas fa-code"></i> Gerar HTML
+      </button>
+      <button class="btn-copiar" onclick="copyCode()" type="button">
+        <i class="fas fa-copy"></i> Copiar código
+      </button>
+    </div>
+    
+    <div class="preview">
+      <h3><i class="fas fa-eye"></i> Prévia</h3>
+      <div id="preview"></div>
+    </div>
+    
+    <h3><i class="fas fa-code"></i> Código HTML</h3>
+    <textarea id="output" rows="18" readonly class="form-control"></textarea>
+    
+    <!-- Área para colar código anterior para reconstruir -->
+    <div class="paste-area">
+      <h4><i class="fas fa-paste"></i> Colar código anterior para reconstruir</h4>
+      <textarea id="pasteCode" placeholder="Cole aqui o código HTML gerado anteriormente..."></textarea>
+      <button onclick="parsePastedCode()" class="btn-copiar">
+        <i class="fas fa-magic"></i> Reconstruir a partir do código
+      </button>
+    </div>
   </div>
-  
-  <div class="container-controls">
-    <button onclick="addContainer(1)">Container 1 Coluna</button>
-    <button onclick="addContainer(2)">Container 2 Colunas</button>
-    <button onclick="addContainer(3)">Container 3 Colunas</button>
-    <button onclick="addContainer(4)">Container 4 Colunas</button>
-    <button onclick="addContainer(5)">Container 5 Colunas</button>
-  </div>
-  <div id="builder"></div>
-  <button onclick="generateCode()">Gerar HTML</button>
-  <button class="copiar" onclick="copyCode()" type="button">Copiar código</button>
-  <h3>Prévia</h3>
-  <div class="preview" id="preview"></div>
-  <h3>Código HTML</h3>
-  <textarea id="output" rows="18" readonly></textarea>
 
-  <script src="https://cdn.quilljs.com/1.3.7/quill.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.quilljs.com/2.0.0-dev.2/quill.js"></script>
   <script>
     // Suprimir avisos de depreciação do Quill
     const originalWarn = console.warn;
@@ -224,7 +549,8 @@
       } else if (type === 'image') {
         containers[containerIdx].blocks[colIdx].push({
           type,
-          content: 'https://via.placeholder.com/400x300?text=Imagem'
+          content: 'https://via.placeholder.com/400x300?text=Imagem',
+          link: '' // Campo para link da imagem
         });
       } else {
         // Sempre usar HTML avançado para texto
@@ -238,6 +564,11 @@
 
     function updateBlock(containerIdx, colIdx, blockIdx, value) {
       containers[containerIdx].blocks[colIdx][blockIdx].content = value;
+      renderPreview();
+    }
+
+    function updateImageLink(containerIdx, colIdx, blockIdx, value) {
+      containers[containerIdx].blocks[colIdx][blockIdx].link = value;
       renderPreview();
     }
 
@@ -315,10 +646,15 @@
               // Processar elementos dentro da coluna
               Array.from(col.children).forEach(element => {
                 if (element.tagName === 'IMG') {
+                  // Verificar se a imagem está dentro de um link
+                  const parentLink = element.closest('a');
+                  const imageLink = parentLink ? parentLink.href : '';
+                  
                   // Adicionar imagem como bloco separado
                   container.blocks[colIdx].push({
                     type: 'image',
-                    content: element.src
+                    content: element.src,
+                    link: imageLink // Adicionar link da imagem
                   });
                   hasImage = true;
                 } else if (element.innerHTML.trim()) {
@@ -340,7 +676,6 @@
           }
         });
         
-        // console.log('Containers reconstruídos:', containers);
         renderBuilder();
         alert('Código reconstruído com sucesso!');
         
@@ -350,19 +685,20 @@
       }
     }
 
-    // Funções de Drag and Drop - Agora integradas em initDragAndDrop()
-
     function renderBuilder() {
       const builder = document.getElementById('builder');
       builder.innerHTML = '';
       quillInstances = {}; // Reset
       
-      // console.log('Renderizando builder com containers:', containers);
-      
       containers.forEach((container, cIdx) => {
-        let html = `<div style="border:1px solid #bbb;padding:12px;border-radius:8px;margin-bottom:18px;position:relative;">
-          <button type="button" onclick="removeContainer(${cIdx})" style="position:absolute;top:8px;right:8px;color:#e74c3c;">Remover Container</button>
-          <div class="container"><div class="row">`;
+        let html = `<div class="container-item">
+          <div class="container-header">
+            <h5 class="container-title">Container ${container.cols} Colunas</h5>
+            <button type="button" onclick="removeContainer(${cIdx})" class="btn-remove">
+              <i class="fas fa-times"></i> Remover Container
+            </button>
+          </div>
+          <div class="row ${containerClasses[container.cols]}">`;
         container.blocks.forEach((col, colIdx) => {
           html += `<div class="${colClasses[container.cols][colIdx]} col" data-container="${cIdx}" data-col="${colIdx}">`;
           col.forEach((block, bIdx) => {
@@ -370,39 +706,51 @@
               <div class="drag-handle" draggable="true">⋮⋮ Arrastar</div>`;
             if (block.type === 'html') {
               const quillId = `quill-${cIdx}-${colIdx}-${bIdx}`;
-              // console.log(`Criando elemento HTML para bloco ${cIdx}-${colIdx}-${bIdx} com ID: ${quillId}`);
-              html += `<label>Texto avançado (editor visual):</label>
-                <div id="${quillId}" class="quill-editor"></div>`;
+              html += `<label class="form-label">Texto avançado (editor visual):</label>
+                <div id="${quillId}" class="quill-editor"></div>
+                <div class="table-controls">
+                  <button id="insert-table-${quillId}" class="insert"><i class="fas fa-table"></i> Inserir Tabela</button>
+                  <button id="insert-row-above-${quillId}" class="add"><i class="fas fa-plus"></i> Adicionar Linha Acima</button>
+                  <button id="insert-row-below-${quillId}" class="add"><i class="fas fa-plus"></i> Adicionar Linha Abaixo</button>
+                  <button id="insert-column-left-${quillId}" class="add"><i class="fas fa-plus"></i> Adicionar Coluna Esquerda</button>
+                  <button id="insert-column-right-${quillId}" class="add"><i class="fas fa-plus"></i> Adicionar Coluna Direita</button>
+                  <button id="delete-row-${quillId}" class="delete"><i class="fas fa-minus"></i> Remover Linha</button>
+                  <button id="delete-column-${quillId}" class="delete"><i class="fas fa-minus"></i> Remover Coluna</button>
+                  <button id="delete-table-${quillId}" class="delete"><i class="fas fa-trash"></i> Remover Tabela</button>
+                </div>`;
             }
             if (block.type === 'image') {
-              html += `<label>URL da imagem:</label>
-                <input type="text" value="${block.content}" onchange="updateBlock(${cIdx},${colIdx},${bIdx}, this.value)" oninput="updateBlock(${cIdx},${colIdx},${bIdx}, this.value)" placeholder="https://...">
-                <img src="${block.content}" alt="Prévia da imagem" />`;
+              html += `<div class="form-group">
+                <label class="form-label">URL da imagem:</label>
+                <input type="text" value="${block.content}" onchange="updateBlock(${cIdx},${colIdx},${bIdx}, this.value)" oninput="updateBlock(${cIdx},${colIdx},${bIdx}, this.value)" class="form-control">
+                <label class="form-label">Link da imagem (opcional):</label>
+                <input type="text" value="${block.link || ''}" onchange="updateImageLink(${cIdx},${colIdx},${bIdx}, this.value)" oninput="updateImageLink(${cIdx},${colIdx},${bIdx}, this.value)" class="form-control">
+                <img src="${block.content}" alt="Prévia da imagem" class="img-fluid" />
+              </div>`;
             }
-            html += `<button type="button" onclick="removeBlock(${cIdx},${colIdx},${bIdx})" style="float:right;color:#e74c3c;">Remover</button>`;
+            html += `<button type="button" onclick="removeBlock(${cIdx},${colIdx},${bIdx})" class="btn-remove-block">
+              <i class="fas fa-times"></i> Remover
+            </button>`;
             html += `</div>`;
           });
           html += `
-            <div>
-              <button type="button" onclick="addBlock(${cIdx},${colIdx},'html')">+ Texto avançado (editor visual)</button>
-              <button type="button" onclick="addBlock(${cIdx},${colIdx},'image')">+ Imagem</button>
+            <div class="text-center">
+              <button type="button" onclick="addBlock(${cIdx},${colIdx},'html')" class="btn-add">
+                <i class="fas fa-plus-circle"></i> Texto avançado (editor visual)
+              </button>
+              <button type="button" onclick="addBlock(${cIdx},${colIdx},'image')" class="btn-add">
+                <i class="fas fa-plus-circle"></i> Imagem
+              </button>
             </div>
           `;
           html += `</div>`;
         });
-        html += `</div></div></div>`;
+        html += `</div></div>`;
         builder.innerHTML += html;
       });
       
-      // console.log('HTML gerado, verificando elementos .quill-editor...');
-      // console.log('Elementos .quill-editor encontrados:', document.querySelectorAll('.quill-editor').length);
-      // document.querySelectorAll('.quill-editor').forEach((el, i) => {
-      //   console.log(`Elemento ${i}:`, el.id, el);
-      // });
-      
       // Configurar drag and drop após renderizar
       setTimeout(() => {
-        // console.log('Iniciando inicialização dos editores...');
         initQuillEditors();
         initDragAndDrop();
       }, 300);
@@ -411,8 +759,6 @@
     }
 
     function initDragAndDrop() {
-      // console.log('Inicializando drag and drop...');
-      
       // Configurar drag handles
       document.querySelectorAll('.drag-handle').forEach(handle => {
         const bloco = handle.closest('.bloco');
@@ -420,21 +766,17 @@
         const colIdx = parseInt(bloco.dataset.col);
         const blockIdx = parseInt(bloco.dataset.block);
         
-        // console.log(`Configurando drag handle: container ${containerIdx}, col ${colIdx}, block ${blockIdx}`);
-        
         handle.addEventListener('dragstart', (e) => {
           e.stopPropagation();
           draggedElement = { containerIdx, colIdx, blockIdx };
           bloco.classList.add('dragging');
           e.dataTransfer.effectAllowed = 'move';
           e.dataTransfer.setData('text/plain', ''); // Necessário para Firefox
-          // console.log('Drag iniciado:', draggedElement);
         });
         
         handle.addEventListener('dragend', (e) => {
           e.stopPropagation();
           bloco.classList.remove('dragging');
-          // console.log('Drag finalizado');
           draggedElement = null;
         });
       });
@@ -444,13 +786,10 @@
         const containerIdx = parseInt(col.dataset.container);
         const colIdx = parseInt(col.dataset.col);
         
-        // console.log(`Configurando drop zone: container ${containerIdx}, col ${colIdx}`);
-        
         col.addEventListener('dragover', (e) => {
           e.preventDefault();
           e.stopPropagation();
           col.classList.add('drag-over');
-          // console.log('Drag over coluna:', containerIdx, colIdx);
         });
         
         col.addEventListener('dragleave', (e) => {
@@ -458,7 +797,6 @@
           e.stopPropagation();
           if (!col.contains(e.relatedTarget)) {
             col.classList.remove('drag-over');
-            // console.log('Drag leave coluna:', containerIdx, colIdx);
           }
         });
         
@@ -467,17 +805,11 @@
           e.stopPropagation();
           col.classList.remove('drag-over');
           
-          // console.log('Drop na coluna:', containerIdx, colIdx);
-          // console.log('Dragged element:', draggedElement);
-          
           if (draggedElement) {
             const { containerIdx: sourceContainer, colIdx: sourceCol, blockIdx } = draggedElement;
             
-            // console.log(`Movendo bloco de container ${sourceContainer}, col ${sourceCol}, block ${blockIdx} para container ${containerIdx}, col ${colIdx}`);
-            
             // Verificar se não está tentando mover para o mesmo local
             if (sourceContainer === containerIdx && sourceCol === colIdx) {
-              // console.log('Tentando mover para o mesmo local, ignorando');
               return;
             }
             
@@ -495,12 +827,7 @@
               containers[sourceContainer].blocks[sourceCol].splice(blockIdx, 1);
               containers[containerIdx].blocks[colIdx].push(block);
               
-              // console.log('Bloco movido com sucesso');
-              // console.log('Containers após movimento:', containers);
-              
               renderBuilder();
-            } else {
-              // console.error('Índices inválidos para mover bloco');
             }
           }
         });
@@ -508,9 +835,6 @@
     }
 
     function initQuillEditors() {
-      // console.log('Inicializando editores Quill...');
-      // console.log('Elementos .quill-editor encontrados:', document.querySelectorAll('.quill-editor').length);
-      
       // Limpar instâncias existentes
       Object.keys(quillInstances).forEach(id => {
         if (quillInstances[id]) {
@@ -520,54 +844,30 @@
       quillInstances = {};
       
       document.querySelectorAll('.quill-editor').forEach((div, index) => {
-        // console.log(`Processando editor ${index}:`, div.id, div);
-        
         const [cIdx, colIdx, bIdx] = div.id.split('-').slice(1).map(Number);
         const block = containers[cIdx].blocks[colIdx][bIdx];
         
-        // console.log(`Inicializando Quill para ${div.id}:`, block);
-        // console.log(`Índices extraídos: cIdx=${cIdx}, colIdx=${colIdx}, bIdx=${bIdx}`);
-        
         if (block && block.type === 'html') {
-          // console.log(`Criando editor Quill para ${div.id} com conteúdo:`, block.content.substring(0, 100) + '...');
-          
           const quill = new Quill(`#${div.id}`, {
             theme: 'snow',
             modules: {
-              toolbar: [
-                [{ 'header': [1, 2, 3, false] }],
-                ['bold', 'italic', 'underline', 'strike'],
-                [{ 'color': [] }, { 'background': [] }],
-                [{ 'align': [] }],
-                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                [{ 'indent': '-1'}, { 'indent': '+1' }],
-                ['link', 'image', 'code-block'],
-                ['clean']
-              ]
+              toolbar: {
+                container: [
+                  [{ 'header': [1, 2, 3, false] }],
+                  ['bold', 'italic', 'underline', 'strike'],
+                  [{ 'color': [] }, { 'background': [] }],
+                  [{ 'align': [] }],
+                  [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                  [{ 'indent': '-1'}, { 'indent': '+1' }],
+                  ['link', 'image', 'code-block'],
+                  ['clean']
+                ]
+              }
             }
           });
           
-          // Carregar conteúdo no editor imediatamente
-          // console.log(`Carregando conteúdo imediatamente no ${div.id}`);
+          // Carregar conteúdo no editor
           quill.root.innerHTML = block.content;
-          
-          // Verificar se o conteúdo foi carregado
-          setTimeout(() => {
-            const loadedContent = quill.root.innerHTML;
-            // console.log(`Conteúdo carregado em ${div.id}:`, loadedContent.substring(0, 100) + '...');
-            // console.log(`Conteúdo original:`, block.content.substring(0, 100) + '...');
-            // console.log(`Elemento DOM do editor:`, quill.root);
-            
-            if (loadedContent.trim() !== block.content.trim()) {
-              // console.warn(`Conteúdo não carregado corretamente em ${div.id}`);
-              // console.warn(`Esperado:`, block.content.substring(0, 100));
-              // console.warn(`Obtido:`, loadedContent.substring(0, 100));
-              // Tentar novamente
-              quill.root.innerHTML = block.content;
-            } else {
-              // console.log(`✅ Conteúdo carregado corretamente em ${div.id}`);
-            }
-          }, 100);
           
           quill.on('text-change', function() {
             block.content = quill.root.innerHTML;
@@ -575,14 +875,558 @@
           });
           
           quillInstances[div.id] = quill;
-          // console.log(`✅ Editor Quill criado para ${div.id}`);
-        } else {
-          // console.log(`❌ Bloco não é do tipo HTML ou não existe:`, block);
+          
+          // Configurar botões de tabela
+          setupTableButtons(div.id, quill);
         }
       });
-      
-      // console.log('Editores Quill criados:', Object.keys(quillInstances));
     }
+
+    function setupTableButtons(quillId, quill) {
+      console.log('Configurando botões de tabela para:', quillId);
+      
+      // Tentar obter o módulo de tabela
+      let tableModule = null;
+      try {
+        tableModule = quill.getModule('table');
+        console.log('Módulo de tabela encontrado:', tableModule);
+      } catch (error) {
+        console.log('Módulo de tabela não disponível, usando fallback HTML');
+      }
+      
+      // Funções para manipular tabelas
+      const tableActions = {
+        insertTable: () => {
+          console.log('Inserindo tabela...');
+          if (tableModule && typeof tableModule.insertTable === 'function') {
+            tableModule.insertTable(2, 2);
+          } else {
+            insertTableHTML(quill);
+          }
+        },
+        
+        insertRowAbove: () => {
+          console.log('Adicionando linha acima...');
+          if (tableModule && typeof tableModule.insertRowAbove === 'function') {
+            tableModule.insertRowAbove();
+          } else {
+            insertRowAbove(quill);
+          }
+        },
+        
+        insertRowBelow: () => {
+          console.log('Adicionando linha abaixo...');
+          if (tableModule && typeof tableModule.insertRowBelow === 'function') {
+            tableModule.insertRowBelow();
+          } else {
+            insertRowBelow(quill);
+          }
+        },
+        
+        insertColumnLeft: () => {
+          console.log('Adicionando coluna esquerda...');
+          if (tableModule && typeof tableModule.insertColumnLeft === 'function') {
+            tableModule.insertColumnLeft();
+          } else {
+            insertColumnLeft(quill);
+          }
+        },
+        
+        insertColumnRight: () => {
+          console.log('Adicionando coluna direita...');
+          if (tableModule && typeof tableModule.insertColumnRight === 'function') {
+            tableModule.insertColumnRight();
+          } else {
+            insertColumnRight(quill);
+          }
+        },
+        
+        deleteRow: () => {
+          console.log('Removendo linha...');
+          if (tableModule && typeof tableModule.deleteRow === 'function') {
+            tableModule.deleteRow();
+          } else {
+            deleteRow(quill);
+          }
+        },
+        
+        deleteColumn: () => {
+          console.log('Removendo coluna...');
+          if (tableModule && typeof tableModule.deleteColumn === 'function') {
+            tableModule.deleteColumn();
+          } else {
+            deleteColumn(quill);
+          }
+        },
+        
+        deleteTable: () => {
+          console.log('Removendo tabela...');
+          if (tableModule && typeof tableModule.deleteTable === 'function') {
+            tableModule.deleteTable();
+          } else {
+            deleteTable(quill);
+          }
+        }
+      };
+      
+      // Configurar botões de tabela
+      const buttons = [
+        { id: 'insert-table', action: tableActions.insertTable },
+        { id: 'insert-row-above', action: tableActions.insertRowAbove },
+        { id: 'insert-row-below', action: tableActions.insertRowBelow },
+        { id: 'insert-column-left', action: tableActions.insertColumnLeft },
+        { id: 'insert-column-right', action: tableActions.insertColumnRight },
+        { id: 'delete-row', action: tableActions.deleteRow },
+        { id: 'delete-column', action: tableActions.deleteColumn },
+        { id: 'delete-table', action: tableActions.deleteTable }
+      ];
+      
+      buttons.forEach(button => {
+        const btnElement = document.getElementById(`${button.id}-${quillId}`);
+        if (btnElement) {
+          console.log('Configurando botão:', button.id, 'para elemento:', btnElement);
+          btnElement.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            button.action();
+          });
+        } else {
+          console.log('Botão não encontrado:', `${button.id}-${quillId}`);
+        }
+      });
+    }
+
+         function insertTableHTML(quill) {
+       console.log('Inserindo tabela HTML...');
+       
+       // Criar HTML da tabela como string - sem estilos inline
+       const tableHTML = `
+         <table>
+           <tr>
+             <td>Célula 1</td>
+             <td>Célula 2</td>
+           </tr>
+           <tr>
+             <td>Célula 3</td>
+             <td>Célula 4</td>
+           </tr>
+         </table>
+       `;
+       
+       const range = quill.getSelection();
+       if (range) {
+         console.log('Inserindo tabela na posição:', range.index);
+         
+         // Inserir quebra de linha antes da tabela
+         quill.insertText(range.index, '\n');
+         
+         // Inserir a tabela como HTML
+         quill.clipboard.dangerouslyPasteHTML(range.index + 1, tableHTML);
+         
+         // Forçar atualização do Quill
+         quill.update();
+       } else {
+         console.log('Nenhuma seleção encontrada, inserindo no final');
+         quill.insertText(quill.getLength(), '\n');
+         quill.clipboard.dangerouslyPasteHTML(quill.getLength(), tableHTML);
+         quill.update();
+       }
+     }
+
+     // Funções de fallback para manipulação de tabelas
+     function findCurrentTable(quill) {
+       console.log('Procurando tabela atual...');
+       
+       // Primeiro, tentar encontrar qualquer tabela no editor
+       const tables = quill.root.querySelectorAll('table');
+       console.log('Tabelas encontradas no editor:', tables.length);
+       
+       if (tables.length === 0) {
+         console.log('Nenhuma tabela encontrada no editor');
+         return null;
+       }
+       
+       // Se há apenas uma tabela, usar ela
+       if (tables.length === 1) {
+         console.log('Usando única tabela encontrada');
+         return tables[0];
+       }
+       
+       // Se há múltiplas tabelas, tentar encontrar a mais próxima do cursor
+       const range = quill.getSelection();
+       if (!range) {
+         console.log('Nenhuma seleção ativa, usando primeira tabela');
+         return tables[0];
+       }
+       
+       // Tentar encontrar a tabela através do elemento atual
+       const [leaf, offset] = quill.getLeaf(range.index);
+       let table = null;
+       
+       // Verificar se leaf.domNode existe e é um elemento DOM
+       if (leaf && leaf.domNode && leaf.domNode.nodeType === Node.ELEMENT_NODE) {
+         table = leaf.domNode.closest('table');
+         if (table) {
+           console.log('Tabela encontrada através do elemento atual');
+           return table;
+         }
+       }
+       
+       // Tentar encontrar a tabela mais próxima baseada na posição do cursor
+       let closestTable = null;
+       let minDistance = Infinity;
+       
+       tables.forEach(table => {
+         const rect = table.getBoundingClientRect();
+         const editorRect = quill.root.getBoundingClientRect();
+         const tableTop = rect.top - editorRect.top;
+         const cursorTop = range.index * 20; // Aproximação da posição do cursor
+         const distance = Math.abs(tableTop - cursorTop);
+         
+         if (distance < minDistance) {
+           minDistance = distance;
+           closestTable = table;
+         }
+       });
+       
+       if (closestTable) {
+         console.log('Tabela mais próxima encontrada');
+         return closestTable;
+       }
+       
+       // Se não encontrou, usar a primeira tabela
+       console.log('Usando primeira tabela como fallback');
+       return tables[0];
+     }
+     
+     function findCurrentRow(quill) {
+       console.log('Procurando linha atual...');
+       
+       // Primeiro, tentar encontrar qualquer linha na tabela atual
+       const table = findCurrentTable(quill);
+       if (!table) {
+         console.log('Nenhuma tabela encontrada para procurar linha');
+         return null;
+       }
+       
+       const rows = table.querySelectorAll('tr');
+       console.log('Linhas encontradas na tabela:', rows.length);
+       
+       if (rows.length === 0) {
+         console.log('Nenhuma linha encontrada na tabela');
+         return null;
+       }
+       
+       // Se há apenas uma linha, usar ela
+       if (rows.length === 1) {
+         console.log('Usando única linha encontrada');
+         return rows[0];
+       }
+       
+       // Se há múltiplas linhas, tentar encontrar a mais próxima do cursor
+       const range = quill.getSelection();
+       if (!range) {
+         console.log('Nenhuma seleção ativa, usando primeira linha');
+         return rows[0];
+       }
+       
+       const [leaf, offset] = quill.getLeaf(range.index);
+       let row = null;
+       
+       if (leaf && leaf.domNode && leaf.domNode.nodeType === Node.ELEMENT_NODE) {
+         row = leaf.domNode.closest('tr');
+         if (row && table.contains(row)) {
+           console.log('Linha encontrada através do elemento atual');
+           return row;
+         }
+       }
+       
+       // Se não encontrou, usar a primeira linha
+       console.log('Usando primeira linha como fallback');
+       return rows[0];
+     }
+     
+     function findCurrentCell(quill) {
+       const range = quill.getSelection();
+       if (!range) return null;
+       
+       const [leaf, offset] = quill.getLeaf(range.index);
+       let cell = null;
+       
+       if (leaf && leaf.domNode && leaf.domNode.nodeType === Node.ELEMENT_NODE) {
+         cell = leaf.domNode.closest('td, th');
+       }
+       
+       if (!cell) {
+         const table = findCurrentTable(quill);
+         if (table) {
+           cell = table.querySelector('td, th');
+         }
+       }
+       
+       return cell;
+     }
+
+     function insertRowAbove(quill) {
+       console.log('Tentando inserir linha acima...');
+       const table = findCurrentTable(quill);
+       const currentRow = findCurrentRow(quill);
+       
+       if (table && currentRow) {
+         console.log('Tabela e linha encontradas, inserindo nova linha...');
+         const newRow = document.createElement('tr');
+         const colCount = currentRow.cells.length;
+         
+         for (let i = 0; i < colCount; i++) {
+           const cell = document.createElement('td');
+           cell.innerHTML = 'Nova célula';
+           newRow.appendChild(cell);
+         }
+         
+         currentRow.parentNode.insertBefore(newRow, currentRow);
+         
+         // Forçar atualização do Quill
+         quill.update();
+         console.log('Linha inserida com sucesso');
+       } else {
+         console.log('Tabela ou linha não encontradas');
+         // Se não encontrou, tentar inserir na primeira tabela
+         const tables = quill.root.querySelectorAll('table');
+         if (tables.length > 0) {
+           const table = tables[0];
+           const firstRow = table.querySelector('tr');
+           if (firstRow) {
+             console.log('Inserindo linha na primeira tabela...');
+             const newRow = document.createElement('tr');
+             const colCount = firstRow.cells.length;
+             
+             for (let i = 0; i < colCount; i++) {
+               const cell = document.createElement('td');
+               cell.innerHTML = 'Nova célula';
+               newRow.appendChild(cell);
+             }
+             
+             table.insertBefore(newRow, firstRow);
+             quill.update();
+             console.log('Linha inserida na primeira tabela');
+           }
+         }
+       }
+     }
+
+     function insertRowBelow(quill) {
+       console.log('Tentando inserir linha abaixo...');
+       const table = findCurrentTable(quill);
+       const currentRow = findCurrentRow(quill);
+       
+       if (table && currentRow) {
+         console.log('Tabela e linha encontradas, inserindo nova linha...');
+         const newRow = document.createElement('tr');
+         const colCount = currentRow.cells.length;
+         
+         for (let i = 0; i < colCount; i++) {
+           const cell = document.createElement('td');
+           cell.innerHTML = 'Nova célula';
+           newRow.appendChild(cell);
+         }
+         
+         currentRow.parentNode.insertBefore(newRow, currentRow.nextSibling);
+         
+         // Forçar atualização do Quill
+         quill.update();
+         console.log('Linha inserida com sucesso');
+       } else {
+         console.log('Tabela ou linha não encontradas');
+         // Se não encontrou, tentar inserir na primeira tabela
+         const tables = quill.root.querySelectorAll('table');
+         if (tables.length > 0) {
+           const table = tables[0];
+           const rows = table.querySelectorAll('tr');
+           if (rows.length > 0) {
+             const lastRow = rows[rows.length - 1];
+             console.log('Inserindo linha na primeira tabela...');
+             const newRow = document.createElement('tr');
+             const colCount = lastRow.cells.length;
+             
+             for (let i = 0; i < colCount; i++) {
+               const cell = document.createElement('td');
+               cell.innerHTML = 'Nova célula';
+               newRow.appendChild(cell);
+             }
+             
+             table.appendChild(newRow);
+             quill.update();
+             console.log('Linha inserida na primeira tabela');
+           }
+         }
+       }
+     }
+
+     function insertColumnLeft(quill) {
+       console.log('Tentando inserir coluna esquerda...');
+       const table = findCurrentTable(quill);
+       
+       if (table) {
+         console.log('Tabela encontrada, inserindo nova coluna...');
+         const rows = table.querySelectorAll('tr');
+         rows.forEach((row, index) => {
+           const cell = document.createElement('td');
+           cell.innerHTML = 'Nova célula';
+           row.insertBefore(cell, row.firstChild);
+         });
+         
+         // Forçar atualização do Quill
+         quill.update();
+         console.log('Coluna inserida com sucesso');
+       } else {
+         console.log('Tabela não encontrada');
+         // Se não encontrou, tentar inserir na primeira tabela
+         const tables = quill.root.querySelectorAll('table');
+         if (tables.length > 0) {
+           const table = tables[0];
+           console.log('Inserindo coluna na primeira tabela...');
+           const rows = table.querySelectorAll('tr');
+           rows.forEach((row, index) => {
+             const cell = document.createElement('td');
+             cell.innerHTML = 'Nova célula';
+             row.insertBefore(cell, row.firstChild);
+           });
+           quill.update();
+           console.log('Coluna inserida na primeira tabela');
+         }
+       }
+     }
+
+     function insertColumnRight(quill) {
+       console.log('Tentando inserir coluna direita...');
+       const table = findCurrentTable(quill);
+       
+       if (table) {
+         console.log('Tabela encontrada, inserindo nova coluna...');
+         const rows = table.querySelectorAll('tr');
+         rows.forEach((row, index) => {
+           const cell = document.createElement('td');
+           cell.innerHTML = 'Nova célula';
+           row.appendChild(cell);
+         });
+         
+         // Forçar atualização do Quill
+         quill.update();
+         console.log('Coluna inserida com sucesso');
+       } else {
+         console.log('Tabela não encontrada');
+         // Se não encontrou, tentar inserir na primeira tabela
+         const tables = quill.root.querySelectorAll('table');
+         if (tables.length > 0) {
+           const table = tables[0];
+           console.log('Inserindo coluna na primeira tabela...');
+           const rows = table.querySelectorAll('tr');
+           rows.forEach((row, index) => {
+             const cell = document.createElement('td');
+             cell.innerHTML = 'Nova célula';
+             row.appendChild(cell);
+           });
+           quill.update();
+           console.log('Coluna inserida na primeira tabela');
+         }
+       }
+     }
+
+     function deleteRow(quill) {
+       console.log('Tentando remover linha...');
+       const table = findCurrentTable(quill);
+       const currentRow = findCurrentRow(quill);
+       
+       if (table && currentRow) {
+         const rows = table.querySelectorAll('tr');
+         if (rows.length > 1) {
+           currentRow.remove();
+           quill.update();
+           console.log('Linha removida com sucesso');
+         } else {
+           console.log('Não é possível remover a última linha');
+         }
+       } else {
+         console.log('Tabela ou linha não encontradas');
+         // Se não encontrou, tentar remover da primeira tabela
+         const tables = quill.root.querySelectorAll('table');
+         if (tables.length > 0) {
+           const table = tables[0];
+           const rows = table.querySelectorAll('tr');
+           if (rows.length > 1) {
+             rows[rows.length - 1].remove();
+             quill.update();
+             console.log('Linha removida da primeira tabela');
+           } else {
+             console.log('Não é possível remover a última linha da primeira tabela');
+           }
+         }
+       }
+     }
+
+     function deleteColumn(quill) {
+       console.log('Tentando remover coluna...');
+       const table = findCurrentTable(quill);
+       const currentCell = findCurrentCell(quill);
+       
+       if (table && currentCell) {
+         const cellIndex = Array.from(currentCell.parentNode.children).indexOf(currentCell);
+         const rows = table.querySelectorAll('tr');
+         
+         rows.forEach(row => {
+           const cells = row.querySelectorAll('td, th');
+           if (cells.length > 1 && cells[cellIndex]) {
+             cells[cellIndex].remove();
+           }
+         });
+         quill.update();
+         console.log('Coluna removida com sucesso');
+       } else {
+         console.log('Tabela ou célula não encontradas');
+         // Se não encontrou, tentar remover da primeira tabela
+         const tables = quill.root.querySelectorAll('table');
+         if (tables.length > 0) {
+           const table = tables[0];
+           const rows = table.querySelectorAll('tr');
+           if (rows.length > 0) {
+             const firstRow = rows[0];
+             const cells = firstRow.querySelectorAll('td, th');
+             if (cells.length > 1) {
+               rows.forEach(row => {
+                 const rowCells = row.querySelectorAll('td, th');
+                 if (rowCells.length > 0) {
+                   rowCells[rowCells.length - 1].remove();
+                 }
+               });
+               quill.update();
+               console.log('Coluna removida da primeira tabela');
+             } else {
+               console.log('Não é possível remover a última coluna da primeira tabela');
+             }
+           }
+         }
+       }
+     }
+
+     function deleteTable(quill) {
+       console.log('Tentando remover tabela...');
+       const table = findCurrentTable(quill);
+       
+       if (table) {
+         table.remove();
+         quill.update();
+         console.log('Tabela removida com sucesso');
+       } else {
+         console.log('Tabela não encontrada');
+         // Se não encontrou, tentar remover a primeira tabela
+         const tables = quill.root.querySelectorAll('table');
+         if (tables.length > 0) {
+           tables[0].remove();
+           quill.update();
+           console.log('Primeira tabela removida');
+         }
+       }
+     }
 
     function renderPreview() {
       const preview = document.getElementById('preview');
@@ -594,7 +1438,13 @@
           html += `<div class="${colClasses[container.cols][colIdx]}">\n`;
           col.forEach(block => {
             if (block.type === 'html') html += `${block.content}\n`;
-            if (block.type === 'image') html += `<img src="${block.content}" alt="Imagem" />\n`;
+            if (block.type === 'image') {
+              if (block.link && block.link.trim()) {
+                html += `<a href="${block.link}" target="_blank"><img src="${block.content}" alt="Imagem" /></a>\n`;
+              } else {
+                html += `<img src="${block.content}" alt="Imagem" />\n`;
+              }
+            }
           });
           html += `</div>\n`;
         });
@@ -613,7 +1463,13 @@
           html += `<div class="${colClasses[container.cols][colIdx]}">\n`;
           col.forEach(block => {
             if (block.type === 'html') html += `${block.content}\n`;
-            if (block.type === 'image') html += `<img src="${block.content}" alt="Imagem" />\n`;
+            if (block.type === 'image') {
+              if (block.link && block.link.trim()) {
+                html += `<a href="${block.link}" target="_blank"><img src="${block.content}" alt="Imagem" /></a>\n`;
+              } else {
+                html += `<img src="${block.content}" alt="Imagem" />\n`;
+              }
+            }
           });
           html += `</div>\n`;
         });
@@ -623,24 +1479,21 @@
       document.getElementById('output').value = html;
     }
 
-    function debugContainers() {
-      // console.log('=== DEBUG CONTAINERS ===');
-      containers.forEach((container, cIdx) => {
-        // console.log(`Container ${cIdx}:`, container);
-        container.blocks.forEach((col, colIdx) => {
-          col.forEach((block, bIdx) => {
-            // console.log(`  Bloco ${cIdx}-${colIdx}-${bIdx}:`, block);
-          });
-        });
-      });
-      // console.log('=== FIM DEBUG ===');
-    }
-
     function copyCode() {
       const output = document.getElementById('output');
       output.select();
       document.execCommand('copy');
-      alert('Código copiado!');
+      
+      // Feedback visual
+      const button = event.target;
+      const originalText = button.innerHTML;
+      button.innerHTML = '<i class="fas fa-check"></i> Copiado!';
+      button.style.background = '#28a745';
+      
+      setTimeout(() => {
+        button.innerHTML = originalText;
+        button.style.background = '';
+      }, 2000);
     }
 
     // Render inicial
