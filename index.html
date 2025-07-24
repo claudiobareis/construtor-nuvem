@@ -101,6 +101,37 @@
       font-weight: 600;
       color: #2c3e50;
       font-size: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .container-name {
+      font-size: 14px;
+      color: #6c757d;
+      font-weight: 500;
+      background: #f8f9fa;
+      padding: 4px 8px;
+      border-radius: 12px;
+      border: 1px solid #dee2e6;
+      white-space: nowrap;
+    }
+
+    .container-name-input {
+      font-size: 14px;
+      color: #495057;
+      background: #fff;
+      border: 1px solid #ced4da;
+      border-radius: 8px;
+      padding: 4px 8px;
+      width: 200px;
+      transition: all 0.3s ease;
+    }
+
+    .container-name-input:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+      outline: none;
     }
     
     .btn-remove {
@@ -521,6 +552,27 @@
       margin: 0;
     }
 
+    /* Estilo especial quando container está recolhido */
+    .container-item.collapsed .container-title .container-name {
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      color: white;
+      font-weight: 600;
+      border: none;
+      padding: 6px 12px;
+      box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    }
+
+    .container-item.collapsed .container-title .container-name .container-name-input {
+      background: transparent;
+      color: white;
+      border: none;
+      font-weight: 600;
+    }
+
+    .container-item.collapsed .container-title .container-name .container-name-input::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
     .container-content.expanded {
       max-height: none;
       opacity: 1;
@@ -844,6 +896,7 @@
     let quillInstances = {};
     let draggedElement = null;
     let draggedContainer = null;
+    let containerCollapseStates = [];
 
     // Classes para colunas responsivas e espaçamento
     const colClasses = {
@@ -866,9 +919,12 @@
     function addContainer(cols) {
       const container = {
         cols,
+        name: `Container ${cols} Colunas`,
         blocks: Array.from({ length: cols }, () => [])
       };
       containers.push(container);
+      // Novo container começa expandido
+      containerCollapseStates.push('expanded');
       renderBuilder();
     }
 
@@ -911,7 +967,16 @@
 
     function removeContainer(idx) {
       containers.splice(idx, 1);
+      // Remover também o estado de colapso
+      containerCollapseStates.splice(idx, 1);
       renderBuilder();
+    }
+
+    function updateContainerName(idx, newName) {
+      if (containers[idx]) {
+        containers[idx].name = newName;
+        renderPreview();
+      }
     }
 
     // Função para duplicar container
@@ -919,6 +984,7 @@
       const container = containers[idx];
       const duplicatedContainer = {
         cols: container.cols,
+        name: `${container.name || `Container ${container.cols} Colunas`} (Cópia)`,
         blocks: container.blocks.map(col => 
           col.map(block => ({
             ...block,
@@ -929,15 +995,26 @@
       
       // Inserir o container duplicado logo após o original
       containers.splice(idx + 1, 0, duplicatedContainer);
+      
+      // O container duplicado começa expandido
+      containerCollapseStates.splice(idx + 1, 0, 'expanded');
+      
       renderBuilder();
     }
 
     // Função para mover container para cima
     function moveContainerUp(idx) {
       if (idx > 0) {
-        const temp = containers[idx];
+        // Preservar estados de colapso
+        const tempContainer = containers[idx];
+        const tempCollapseState = containerCollapseStates[idx];
+        
         containers[idx] = containers[idx - 1];
-        containers[idx - 1] = temp;
+        containers[idx - 1] = tempContainer;
+        
+        containerCollapseStates[idx] = containerCollapseStates[idx - 1];
+        containerCollapseStates[idx - 1] = tempCollapseState;
+        
         renderBuilder();
       }
     }
@@ -945,29 +1022,45 @@
     // Função para mover container para baixo
     function moveContainerDown(idx) {
       if (idx < containers.length - 1) {
-        const temp = containers[idx];
+        // Preservar estados de colapso
+        const tempContainer = containers[idx];
+        const tempCollapseState = containerCollapseStates[idx];
+        
         containers[idx] = containers[idx + 1];
-        containers[idx + 1] = temp;
+        containers[idx + 1] = tempContainer;
+        
+        containerCollapseStates[idx] = containerCollapseStates[idx + 1];
+        containerCollapseStates[idx + 1] = tempCollapseState;
+        
         renderBuilder();
       }
     }
+
+
 
     // Função para recolher/expandir container (accordion)
     function toggleContainerCollapse(idx) {
       const content = document.getElementById(`container-content-${idx}`);
       const button = document.getElementById(`collapse-btn-${idx}`);
+      const containerItem = document.querySelector(`[data-container-id="${idx}"]`);
       const icon = button.querySelector('i');
       
       if (content.classList.contains('expanded')) {
         content.classList.remove('expanded');
         content.classList.add('collapsed');
+        containerItem.classList.add('collapsed');
         icon.className = 'fas fa-chevron-down';
         button.innerHTML = '<i class="fas fa-chevron-down"></i> Expandir';
+        // Armazenar estado de colapso
+        containerCollapseStates[idx] = 'collapsed';
       } else {
         content.classList.remove('collapsed');
         content.classList.add('expanded');
+        containerItem.classList.remove('collapsed');
         icon.className = 'fas fa-chevron-up';
         button.innerHTML = '<i class="fas fa-chevron-up"></i> Recolher';
+        // Armazenar estado de colapso
+        containerCollapseStates[idx] = 'expanded';
       }
     }
 
@@ -982,10 +1075,13 @@
         containers.forEach((_, idx) => {
           const content = document.getElementById(`container-content-${idx}`);
           const button = document.getElementById(`collapse-btn-${idx}`);
+          const containerItem = document.querySelector(`[data-container-id="${idx}"]`);
           if (content && button) {
             content.classList.remove('expanded');
             content.classList.add('collapsed');
+            if (containerItem) containerItem.classList.add('collapsed');
             button.innerHTML = '<i class="fas fa-chevron-down"></i> Expandir';
+            containerCollapseStates[idx] = 'collapsed';
           }
         });
       } else {
@@ -999,10 +1095,13 @@
       containers.forEach((_, idx) => {
         const content = document.getElementById(`container-content-${idx}`);
         const button = document.getElementById(`collapse-btn-${idx}`);
+        const containerItem = document.querySelector(`[data-container-id="${idx}"]`);
         if (content && button) {
           content.classList.remove('collapsed');
           content.classList.add('expanded');
+          if (containerItem) containerItem.classList.remove('collapsed');
           button.innerHTML = '<i class="fas fa-chevron-up"></i> Recolher';
+          containerCollapseStates[idx] = 'expanded';
         }
       });
     }
@@ -1060,6 +1159,7 @@
           if (cols >= 1 && cols <= 5) {
             const container = {
               cols,
+              name: `Container ${cols} Colunas`,
               blocks: Array.from({ length: cols }, () => [])
             };
             
@@ -1116,15 +1216,23 @@
       quillInstances = {}; // Reset
       
       containers.forEach((container, cIdx) => {
-        let html = `<div class="container-item" data-container-id="${cIdx}">
+        let html = `<div class="container-item ${(containerCollapseStates[cIdx] || 'expanded') === 'collapsed' ? 'collapsed' : ''}" data-container-id="${cIdx}">
           <div class="container-header">
             <h5 class="container-title">
               <i class="fas fa-grip-vertical" style="margin-right: 8px; color: #6c757d;"></i>
               Container ${container.cols} Colunas
+              <span class="container-name">
+                <input type="text" 
+                       class="container-name-input" 
+                       value="${container.name || `Container ${container.cols} Colunas`}" 
+                       onchange="updateContainerName(${cIdx}, this.value)" 
+                       onblur="updateContainerName(${cIdx}, this.value)"
+                       placeholder="Nome do container">
+              </span>
             </h5>
             <div class="container-actions">
               <button type="button" onclick="toggleContainerCollapse(${cIdx})" class="btn-collapse" id="collapse-btn-${cIdx}">
-                <i class="fas fa-chevron-up"></i> Recolher
+                <i class="fas fa-${(containerCollapseStates[cIdx] || 'expanded') === 'collapsed' ? 'chevron-down' : 'chevron-up'}"></i> ${(containerCollapseStates[cIdx] || 'expanded') === 'collapsed' ? 'Expandir' : 'Recolher'}
               </button>
               <button type="button" onclick="duplicateContainer(${cIdx})" class="btn-duplicate">
                 <i class="fas fa-copy"></i> Duplicar
@@ -1146,7 +1254,7 @@
               </button>
             </div>
           </div>
-          <div class="container-content expanded" id="container-content-${cIdx}">
+          <div class="container-content ${containerCollapseStates[cIdx] || 'expanded'}" id="container-content-${cIdx}">
             <div class="row ${containerClasses[container.cols]}">`;
         container.blocks.forEach((col, colIdx) => {
           html += `<div class="${colClasses[container.cols][colIdx]} col" data-container="${cIdx}" data-col="${colIdx}">`;
@@ -1357,12 +1465,16 @@
             const targetId = parseInt(targetContainer.dataset.containerId);
             
             if (draggedContainer !== targetId) {
-              // Mover o container
+              // Mover o container preservando o estado de colapso
               const draggedContainerData = containers[draggedContainer];
+              const draggedCollapseState = containerCollapseStates[draggedContainer];
+              
               containers.splice(draggedContainer, 1);
+              containerCollapseStates.splice(draggedContainer, 1);
               
               const newIndex = dropZone.nextElementSibling ? targetId : targetId + 1;
               containers.splice(newIndex, 0, draggedContainerData);
+              containerCollapseStates.splice(newIndex, 0, draggedCollapseState);
               
               renderBuilder();
             }
@@ -2095,6 +2207,7 @@
       try {
         const projectData = {
           containers: containers,
+          containerCollapseStates: containerCollapseStates,
           timestamp: new Date().toISOString(),
           version: '1.0'
         };
@@ -2144,6 +2257,14 @@
         }
         
         containers = projectData.containers;
+        
+        // Carregar estados de colapso se existirem
+        if (projectData.containerCollapseStates) {
+          containerCollapseStates = projectData.containerCollapseStates;
+        } else {
+          // Se não existir, inicializar todos como expandidos
+          containerCollapseStates = new Array(containers.length).fill('expanded');
+        }
         
         // Feedback visual
         const button = event.target;
@@ -2204,6 +2325,15 @@
           const projectData = JSON.parse(savedData);
           if (projectData.containers && Array.isArray(projectData.containers)) {
             containers = projectData.containers;
+            
+            // Carregar estados de colapso se existirem
+            if (projectData.containerCollapseStates) {
+              containerCollapseStates = projectData.containerCollapseStates;
+            } else {
+              // Se não existir, inicializar todos como expandidos
+              containerCollapseStates = new Array(containers.length).fill('expanded');
+            }
+            
             console.log('Projeto carregado automaticamente do localStorage');
           }
         }
