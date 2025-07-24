@@ -441,6 +441,112 @@
     .table-controls button i {
       font-size: 11px;
     }
+
+    /* Estilos para funcionalidades de container */
+    .container-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-move-up, .btn-move-down, .btn-duplicate {
+      background: #6c757d;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 15px;
+      font-size: 11px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .btn-move-up:hover, .btn-move-down:hover {
+      background: #5a6268;
+      transform: scale(1.05);
+    }
+
+    .btn-move-up:disabled, .btn-move-down:disabled {
+      background: #e9ecef;
+      color: #6c757d;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    .btn-move-up:disabled:hover, .btn-move-down:disabled:hover {
+      background: #e9ecef;
+      transform: none;
+    }
+
+    .btn-duplicate {
+      background: #17a2b8;
+    }
+
+    .btn-duplicate:hover {
+      background: #138496;
+      transform: scale(1.05);
+    }
+
+    .btn-collapse {
+      background: #ffc107;
+      color: #212529;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 15px;
+      font-size: 11px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .btn-collapse:hover {
+      background: #e0a800;
+      transform: scale(1.05);
+    }
+
+    .container-content {
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+
+    .container-content.collapsed {
+      max-height: 0;
+      opacity: 0;
+      padding: 0;
+      margin: 0;
+    }
+
+    .container-content.expanded {
+      max-height: none;
+      opacity: 1;
+    }
+
+    /* Estilos para drag and drop de containers */
+    .container-item.dragging {
+      opacity: 0.5;
+      transform: rotate(2deg);
+    }
+
+    .container-drop-zone {
+      border: 2px dashed #667eea;
+      background: rgba(102, 126, 234, 0.05);
+      min-height: 20px;
+      margin: 10px 0;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .container-drop-zone.drag-over {
+      background: rgba(102, 126, 234, 0.1);
+      border-color: #5a6fd8;
+      transform: scale(1.02);
+      box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+    }
   </style>
 </head>
 <body>
@@ -451,21 +557,31 @@
     </div>
     
     <div class="container-controls">
-      <button onclick="addContainer(1)" class="btn-container">
-        <i class="fas fa-columns"></i> Container 1 Coluna
-      </button>
-      <button onclick="addContainer(2)" class="btn-container">
-        <i class="fas fa-columns"></i> Container 2 Colunas
-      </button>
-      <button onclick="addContainer(3)" class="btn-container">
-        <i class="fas fa-columns"></i> Container 3 Colunas
-      </button>
-      <button onclick="addContainer(4)" class="btn-container">
-        <i class="fas fa-columns"></i> Container 4 Colunas
-      </button>
-      <button onclick="addContainer(5)" class="btn-container">
-        <i class="fas fa-columns"></i> Container 5 Colunas
-      </button>
+      <div style="margin-bottom: 15px;">
+        <button onclick="addContainer(1)" class="btn-container">
+          <i class="fas fa-columns"></i> Container 1 Coluna
+        </button>
+        <button onclick="addContainer(2)" class="btn-container">
+          <i class="fas fa-columns"></i> Container 2 Colunas
+        </button>
+        <button onclick="addContainer(3)" class="btn-container">
+          <i class="fas fa-columns"></i> Container 3 Colunas
+        </button>
+        <button onclick="addContainer(4)" class="btn-container">
+          <i class="fas fa-columns"></i> Container 4 Colunas
+        </button>
+        <button onclick="addContainer(5)" class="btn-container">
+          <i class="fas fa-columns"></i> Container 5 Colunas
+        </button>
+      </div>
+      <div>
+        <button onclick="toggleAllContainers()" class="btn-container" style="background: linear-gradient(45deg, #ffc107, #ff8c00);">
+          <i class="fas fa-compress-alt"></i> Recolher/Expandir Todos
+        </button>
+        <button onclick="expandAllContainers()" class="btn-container" style="background: linear-gradient(45deg, #28a745, #20c997);">
+          <i class="fas fa-expand-alt"></i> Expandir Todos
+        </button>
+      </div>
     </div>
     
     <div id="builder"></div>
@@ -512,6 +628,7 @@
     let containers = [];
     let quillInstances = {};
     let draggedElement = null;
+    let draggedContainer = null;
 
     // Classes para colunas responsivas e espaçamento
     const colClasses = {
@@ -580,6 +697,99 @@
     function removeContainer(idx) {
       containers.splice(idx, 1);
       renderBuilder();
+    }
+
+    // Função para duplicar container
+    function duplicateContainer(idx) {
+      const container = containers[idx];
+      const duplicatedContainer = {
+        cols: container.cols,
+        blocks: container.blocks.map(col => 
+          col.map(block => ({
+            ...block,
+            content: block.content // Duplicar o conteúdo
+          }))
+        )
+      };
+      
+      // Inserir o container duplicado logo após o original
+      containers.splice(idx + 1, 0, duplicatedContainer);
+      renderBuilder();
+    }
+
+    // Função para mover container para cima
+    function moveContainerUp(idx) {
+      if (idx > 0) {
+        const temp = containers[idx];
+        containers[idx] = containers[idx - 1];
+        containers[idx - 1] = temp;
+        renderBuilder();
+      }
+    }
+
+    // Função para mover container para baixo
+    function moveContainerDown(idx) {
+      if (idx < containers.length - 1) {
+        const temp = containers[idx];
+        containers[idx] = containers[idx + 1];
+        containers[idx + 1] = temp;
+        renderBuilder();
+      }
+    }
+
+    // Função para recolher/expandir container (accordion)
+    function toggleContainerCollapse(idx) {
+      const content = document.getElementById(`container-content-${idx}`);
+      const button = document.getElementById(`collapse-btn-${idx}`);
+      const icon = button.querySelector('i');
+      
+      if (content.classList.contains('expanded')) {
+        content.classList.remove('expanded');
+        content.classList.add('collapsed');
+        icon.className = 'fas fa-chevron-down';
+        button.innerHTML = '<i class="fas fa-chevron-down"></i> Expandir';
+      } else {
+        content.classList.remove('collapsed');
+        content.classList.add('expanded');
+        icon.className = 'fas fa-chevron-up';
+        button.innerHTML = '<i class="fas fa-chevron-up"></i> Recolher';
+      }
+    }
+
+    // Função para recolher/expandir todos os containers
+    function toggleAllContainers() {
+      const allExpanded = Array.from(document.querySelectorAll('.container-content')).every(
+        content => content.classList.contains('expanded')
+      );
+      
+      if (allExpanded) {
+        // Recolher todos
+        containers.forEach((_, idx) => {
+          const content = document.getElementById(`container-content-${idx}`);
+          const button = document.getElementById(`collapse-btn-${idx}`);
+          if (content && button) {
+            content.classList.remove('expanded');
+            content.classList.add('collapsed');
+            button.innerHTML = '<i class="fas fa-chevron-down"></i> Expandir';
+          }
+        });
+      } else {
+        // Expandir todos
+        expandAllContainers();
+      }
+    }
+
+    // Função para expandir todos os containers
+    function expandAllContainers() {
+      containers.forEach((_, idx) => {
+        const content = document.getElementById(`container-content-${idx}`);
+        const button = document.getElementById(`collapse-btn-${idx}`);
+        if (content && button) {
+          content.classList.remove('collapsed');
+          content.classList.add('expanded');
+          button.innerHTML = '<i class="fas fa-chevron-up"></i> Recolher';
+        }
+      });
     }
 
     // Função para colar código anterior
@@ -691,14 +901,32 @@
       quillInstances = {}; // Reset
       
       containers.forEach((container, cIdx) => {
-        let html = `<div class="container-item">
+        let html = `<div class="container-item" data-container-id="${cIdx}">
           <div class="container-header">
-            <h5 class="container-title">Container ${container.cols} Colunas</h5>
-            <button type="button" onclick="removeContainer(${cIdx})" class="btn-remove">
-              <i class="fas fa-times"></i> Remover Container
-            </button>
+            <h5 class="container-title">
+              <i class="fas fa-grip-vertical" style="margin-right: 8px; color: #6c757d;"></i>
+              Container ${container.cols} Colunas
+            </h5>
+            <div class="container-actions">
+              <button type="button" onclick="toggleContainerCollapse(${cIdx})" class="btn-collapse" id="collapse-btn-${cIdx}">
+                <i class="fas fa-chevron-up"></i> Recolher
+              </button>
+              <button type="button" onclick="duplicateContainer(${cIdx})" class="btn-duplicate">
+                <i class="fas fa-copy"></i> Duplicar
+              </button>
+              <button type="button" onclick="moveContainerUp(${cIdx})" class="btn-move-up" ${cIdx === 0 ? 'disabled' : ''}>
+                <i class="fas fa-arrow-up"></i> Subir
+              </button>
+              <button type="button" onclick="moveContainerDown(${cIdx})" class="btn-move-down" ${cIdx === containers.length - 1 ? 'disabled' : ''}>
+                <i class="fas fa-arrow-down"></i> Descer
+              </button>
+              <button type="button" onclick="removeContainer(${cIdx})" class="btn-remove">
+                <i class="fas fa-times"></i> Remover
+              </button>
+            </div>
           </div>
-          <div class="row ${containerClasses[container.cols]}">`;
+          <div class="container-content expanded" id="container-content-${cIdx}">
+            <div class="row ${containerClasses[container.cols]}">`;
         container.blocks.forEach((col, colIdx) => {
           html += `<div class="${colClasses[container.cols][colIdx]} col" data-container="${cIdx}" data-col="${colIdx}">`;
           col.forEach((block, bIdx) => {
@@ -753,6 +981,7 @@
       setTimeout(() => {
         initQuillEditors();
         initDragAndDrop();
+        initContainerDragAndDrop();
       }, 300);
       
       renderPreview();
@@ -831,6 +1060,96 @@
             }
           }
         });
+      });
+    }
+
+    function initContainerDragAndDrop() {
+      // Configurar drag handles para containers
+      document.querySelectorAll('.container-header').forEach(header => {
+        const containerItem = header.closest('.container-item');
+        const containerId = parseInt(containerItem.dataset.containerId);
+        
+        header.style.cursor = 'move';
+        header.setAttribute('draggable', 'true');
+        
+        header.addEventListener('dragstart', (e) => {
+          e.stopPropagation();
+          draggedContainer = containerId;
+          containerItem.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/plain', '');
+        });
+        
+        header.addEventListener('dragend', (e) => {
+          e.stopPropagation();
+          containerItem.classList.remove('dragging');
+          draggedContainer = null;
+        });
+      });
+      
+      // Configurar zonas de drop entre containers
+      const builder = document.getElementById('builder');
+      
+      builder.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const containerItem = e.target.closest('.container-item');
+        if (containerItem && draggedContainer !== null) {
+          const rect = containerItem.getBoundingClientRect();
+          const midY = rect.top + rect.height / 2;
+          
+          // Remover todas as zonas de drop existentes
+          document.querySelectorAll('.container-drop-zone').forEach(zone => zone.remove());
+          
+          if (e.clientY < midY) {
+            // Inserir zona de drop antes do container
+            const dropZone = document.createElement('div');
+            dropZone.className = 'container-drop-zone drag-over';
+            containerItem.parentNode.insertBefore(dropZone, containerItem);
+          } else {
+            // Inserir zona de drop após o container
+            const dropZone = document.createElement('div');
+            dropZone.className = 'container-drop-zone drag-over';
+            containerItem.parentNode.insertBefore(dropZone, containerItem.nextSibling);
+          }
+        }
+      });
+      
+      builder.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        if (!e.target.closest('.container-item') && !e.target.closest('.container-drop-zone')) {
+          document.querySelectorAll('.container-drop-zone').forEach(zone => zone.remove());
+        }
+      });
+      
+      builder.addEventListener('drop', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const dropZone = e.target.closest('.container-drop-zone');
+        if (dropZone && draggedContainer !== null) {
+          const targetContainer = dropZone.nextElementSibling || dropZone.previousElementSibling;
+          if (targetContainer && targetContainer.classList.contains('container-item')) {
+            const targetId = parseInt(targetContainer.dataset.containerId);
+            
+            if (draggedContainer !== targetId) {
+              // Mover o container
+              const draggedContainerData = containers[draggedContainer];
+              containers.splice(draggedContainer, 1);
+              
+              const newIndex = dropZone.nextElementSibling ? targetId : targetId + 1;
+              containers.splice(newIndex, 0, draggedContainerData);
+              
+              renderBuilder();
+            }
+          }
+        }
+        
+        // Limpar zonas de drop
+        document.querySelectorAll('.container-drop-zone').forEach(zone => zone.remove());
       });
     }
 
