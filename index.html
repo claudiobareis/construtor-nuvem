@@ -962,7 +962,7 @@
       if (type === 'html') {
         containers[containerIdx].blocks[colIdx].push({
           type,
-          content: '<h3>Título</h3><p>Texto com <strong>negrito</strong>, <em>itálico</em> e listas:</p><ul><li>Item 1</li><li>Item 2</li></ul>'
+          content: '<h3>Título Principal</h3><h4>Subtítulo</h4><h5>Seção</h5><h6>Subseção</h6><p>Texto com <strong>negrito</strong>, <em>itálico</em> e listas:</p><ul><li>Item 1</li><li>Item 2</li></ul>'
         });
       } else if (type === 'image') {
         containers[containerIdx].blocks[colIdx].push({
@@ -1563,7 +1563,7 @@
             modules: {
               toolbar: {
                 container: [
-                  [{ 'header': [1, 2, 3, false] }],
+                  [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
                   ['bold', 'italic', 'underline', 'strike'],
                   [{ 'color': [] }, { 'background': [] }],
                   [{ 'align': [] }],
