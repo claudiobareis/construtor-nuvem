@@ -133,6 +133,24 @@
       box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
       outline: none;
     }
+
+    .container-class-input {
+      font-size: 14px;
+      color: #495057;
+      background: #fff;
+      border: 1px solid #ced4da;
+      border-radius: 8px;
+      padding: 4px 8px;
+      width: 200px;
+      transition: all 0.3s ease;
+      margin-left: 10px;
+    }
+
+    .container-class-input:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+      outline: none;
+    }
     
     .btn-remove {
       background: #e74c3c;
@@ -573,6 +591,17 @@
       color: rgba(255, 255, 255, 0.7);
     }
 
+    .container-item.collapsed .container-title .container-class-input {
+      background: transparent;
+      color: white;
+      border: none;
+      font-weight: 600;
+    }
+
+    .container-item.collapsed .container-title .container-class-input::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
     .container-content.expanded {
       max-height: none;
       opacity: 1;
@@ -920,6 +949,7 @@
       const container = {
         cols,
         name: `Container ${cols} Colunas`,
+        customClass: '',
         blocks: Array.from({ length: cols }, () => [])
       };
       containers.push(container);
@@ -979,12 +1009,20 @@
       }
     }
 
+    function updateContainerClass(idx, newClass) {
+      if (containers[idx]) {
+        containers[idx].customClass = newClass;
+        renderPreview();
+      }
+    }
+
     // Função para duplicar container
     function duplicateContainer(idx) {
       const container = containers[idx];
       const duplicatedContainer = {
         cols: container.cols,
         name: `${container.name || `Container ${container.cols} Colunas`} (Cópia)`,
+        customClass: container.customClass || '',
         blocks: container.blocks.map(col => 
           col.map(block => ({
             ...block,
@@ -1157,9 +1195,21 @@
           // Determinar número de colunas
           const cols = row.children.length;
           if (cols >= 1 && cols <= 5) {
+            // Extrair classes personalizadas da row
+            const rowClasses = row.className.split(' ');
+            const customClass = rowClasses.find(cls => 
+              cls && 
+              !cls.startsWith('row') && 
+              !cls.startsWith('push-') && 
+              !cls.startsWith('col-') &&
+              !cls.startsWith('mb-') &&
+              !cls.startsWith('container')
+            );
+            
             const container = {
               cols,
               name: `Container ${cols} Colunas`,
+              customClass: customClass || '',
               blocks: Array.from({ length: cols }, () => [])
             };
             
@@ -1228,6 +1278,14 @@
                        onchange="updateContainerName(${cIdx}, this.value)" 
                        onblur="updateContainerName(${cIdx}, this.value)"
                        placeholder="Nome do container">
+              </span>
+              <span class="container-name">
+                <input type="text" 
+                       class="container-class-input" 
+                       value="${container.customClass || ''}" 
+                       onchange="updateContainerClass(${cIdx}, this.value)" 
+                       onblur="updateContainerClass(${cIdx}, this.value)"
+                       placeholder="Classe CSS (opcional)">
               </span>
             </h5>
             <div class="container-actions">
@@ -2085,7 +2143,8 @@
       let html = '<div class="page-builder-push"><div class="container">';
       containers.forEach((container) => {
         const containerClass = containerClasses[container.cols];
-        html += `<div class="row ${containerClass}">\n`;
+        const customClass = container.customClass ? ` ${container.customClass}` : '';
+        html += `<div class="row ${containerClass}${customClass}">\n`;
         container.blocks.forEach((col, colIdx) => {
           html += `<div class="${colClasses[container.cols][colIdx]}">\n`;
           col.forEach(block => {
@@ -2110,7 +2169,8 @@
       let html = '<div class="page-builder-push"><div class="container">';
       containers.forEach((container) => {
         const containerClass = containerClasses[container.cols];
-        html += `<div class="row ${containerClass}">\n`;
+        const customClass = container.customClass ? ` ${container.customClass}` : '';
+        html += `<div class="row ${containerClass}${customClass}">\n`;
         container.blocks.forEach((col, colIdx) => {
           html += `<div class="${colClasses[container.cols][colIdx]}">\n`;
           col.forEach(block => {
