@@ -344,51 +344,46 @@
          border-radius: 8px;
        }
        
-               /* Estilos para o CKEditor 5 */
-        .ck-editor {
-          margin-bottom: 15px;
-        }
-        
-        .ck-editor__editable {
-          min-height: 250px;
-          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-          font-size: 14px;
-          line-height: 1.6;
-          border-radius: 8px;
-        }
-        
-        .ck-toolbar {
-          border-top-left-radius: 8px;
-          border-top-right-radius: 8px;
-          border-color: #ced4da;
-        }
-        
-        .ck-content {
-          border-bottom-left-radius: 8px;
-          border-bottom-right-radius: 8px;
-          border-color: #ced4da;
-        }
-        
-        /* Estilos para tabelas no CKEditor */
-        .ck-editor__editable table {
-          border-collapse: collapse;
-          width: 100%;
-          margin: 15px 0;
-          border: 1px solid #dee2e6;
-        }
-        
-        .ck-editor__editable table td,
-        .ck-editor__editable table th {
-          padding: 8px;
-          text-align: left;
-          vertical-align: top;
-          border: 1px solid #dee2e6;
-        }
-        
-        .ck-editor__editable table th {
-          background-color: #f8f9fa;
-          font-weight: 600;
-        }
+       /* Estilos para o Quill.js */
+       .ql-editor {
+         min-height: 250px;
+         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+         font-size: 14px;
+         line-height: 1.6;
+       }
+       
+       .ql-toolbar {
+         border-top-left-radius: 8px;
+         border-top-right-radius: 8px;
+         border-color: #ced4da;
+       }
+       
+       .ql-container {
+         border-bottom-left-radius: 8px;
+         border-bottom-right-radius: 8px;
+         border-color: #ced4da;
+       }
+       
+       /* Estilos para tabelas no Quill */
+       .ql-editor table {
+         border-collapse: collapse;
+         width: 100%;
+         margin: 15px 0;
+         border: 1px solid #dee2e6;
+       }
+       
+       .ql-editor table td,
+       .ql-editor table th {
+         padding: 8px;
+         text-align: left;
+         vertical-align: top;
+         border: 1px solid #dee2e6;
+       }
+       
+       .ql-editor table th {
+         background-color: #f8f9fa;
+         font-weight: 600;
+       }
     
     img { 
       max-width: 100%; 
@@ -459,7 +454,40 @@
       .push-5-cols .col { flex: 0 0 calc(20% - 8px); }
     }
 
-         
+         /* Estilos para os controles de tabela */
+     .table-controls {
+       background: #f8f9fa;
+       padding: 10px;
+       border-radius: 8px;
+       margin-bottom: 10px;
+       border: 1px solid #dee2e6;
+       display: flex;
+       flex-wrap: wrap;
+       gap: 8px;
+       align-items: center;
+     }
+
+         .table-controls button {
+       background: #28a745;
+       color: white;
+       border: none;
+       padding: 6px 10px;
+       border-radius: 6px;
+       margin: 0;
+       font-size: 11px;
+       cursor: pointer;
+       transition: all 0.3s ease;
+       display: flex;
+       align-items: center;
+       gap: 4px;
+       font-weight: 500;
+     }
+
+         .table-controls button:hover {
+       background: #218838;
+       transform: scale(1.05);
+       box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+     }
 
     
 
@@ -883,18 +911,18 @@
 
            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
       
-      <!-- CKEditor 5 - Editor profissional com excelente suporte para tabelas -->
-      <script src="https://cdn.ckeditor.com/ckeditor5/40.1.0/classic/ckeditor.js"></script>
+      <!-- TinyMCE - Editor muito mais robusto para tabelas -->
+      <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 
   <script>
-                                       // Configuração do CKEditor 5
-       console.log('Inicializando CKEditor 5...');
-     
-                    let containers = [];
-       let ckEditorInstances = {};
-       let draggedElement = null;
-       let draggedContainer = null;
-       let containerCollapseStates = [];
+                   // Configuração do Quill.js
+      console.log('Inicializando Quill.js...');
+    
+                   let containers = [];
+      let quillInstances = {};
+      let draggedElement = null;
+      let draggedContainer = null;
+      let containerCollapseStates = [];
 
     // Classes para colunas responsivas e espaçamento
     const colClasses = {
@@ -1249,7 +1277,7 @@
        
                const builder = document.getElementById('builder');
         builder.innerHTML = '';
-                                   ckEditorInstances = {}; // Reset
+                 quillInstances = {}; // Reset
       
       containers.forEach((container, cIdx) => {
         let html = `<div class="container-item ${(containerCollapseStates[cIdx] || 'expanded') === 'collapsed' ? 'collapsed' : ''}" data-container-id="${cIdx}">
@@ -1309,8 +1337,27 @@
                  const quillId = `quill-${cIdx}-${colIdx}-${bIdx}`;
                  console.log('Renderizando bloco HTML:', {cIdx, colIdx, bIdx, quillId, content: block.content});
                                    html += `<label class="form-label">Texto avançado (editor visual):</label>
-                                      
-                                                                             <div id="${quillId}" class="ck-editor">${block.content || ''}</div>`;
+                                      <div class="table-controls">
+                                        <button type="button" onclick="insertTable('${quillId}')" class="btn-add">
+                                          <i class="fas fa-table"></i> Inserir Tabela
+                                        </button>
+                                        <button type="button" onclick="insertTableRow('${quillId}')" class="btn-add">
+                                          <i class="fas fa-plus"></i> + Linha
+                                        </button>
+                                        <button type="button" onclick="insertTableColumn('${quillId}')" class="btn-add">
+                                          <i class="fas fa-plus"></i> + Coluna
+                                        </button>
+                                        <button type="button" onclick="deleteTableRow('${quillId}')" class="btn-remove-block">
+                                          <i class="fas fa-minus"></i> - Linha
+                                        </button>
+                                        <button type="button" onclick="deleteTableColumn('${quillId}')" class="btn-remove-block">
+                                          <i class="fas fa-minus"></i> - Coluna
+                                        </button>
+                                        <button type="button" onclick="deleteTable('${quillId}')" class="btn-remove-block">
+                                          <i class="fas fa-trash"></i> Deletar Tabela
+                                        </button>
+                                      </div>
+                                      <div id="${quillId}" class="quill-editor">${block.content || ''}</div>`;
                }
             if (block.type === 'image') {
               html += `<div class="form-group">
@@ -1348,14 +1395,14 @@
          initContainerDragAndDrop();
        }, 100);
        
-                                                               // Inicializar CKEditor 5 com delay para garantir que o DOM esteja pronto
-          setTimeout(() => {
-            console.log('Iniciando CKEditor 5 após renderização...');
-            // Aguardar um pouco mais para garantir que o DOM esteja completamente pronto
-            setTimeout(() => {
-              initCKEditorInstances();
-            }, 300);
-          }, 800);
+                               // Inicializar Quill.js com delay para garantir que o DOM esteja pronto
+         setTimeout(() => {
+           console.log('Iniciando Quill.js após renderização...');
+           // Aguardar um pouco mais para garantir que o DOM esteja completamente pronto
+           setTimeout(() => {
+             initQuillEditors();
+           }, 300);
+         }, 800);
       
       renderPreview();
       console.log('Builder renderizado com sucesso!');
@@ -1531,113 +1578,113 @@
       });
     }
 
-                                                                               // Função para inicializar instâncias do CKEditor 5
-            function initCKEditorInstances() {
-              console.log('Inicializando editores CKEditor 5...');
-              
-              // Limpar instâncias existentes
-              Object.keys(ckEditorInstances).forEach(id => {
-                if (ckEditorInstances[id]) {
-                  try {
-                    ckEditorInstances[id].destroy();
-                  } catch (e) {
-                    console.log('Erro ao destruir instância:', e);
-                  }
-                }
-              });
-              ckEditorInstances = {};
-              
-              const editors = document.querySelectorAll('.ck-editor');
-              console.log(`Encontrados ${editors.length} editores para inicializar`);
-              
-              if (editors.length === 0) {
-                return;
-              }
-              
-              // Inicializar todos os editores
-              editors.forEach((editorDiv, index) => {
-                const [cIdx, colIdx, bIdx] = editorDiv.id.split('-').slice(1).map(Number);
-                
-                if (isNaN(cIdx) || isNaN(colIdx) || isNaN(bIdx) || 
-                    !containers[cIdx] || !containers[cIdx].blocks[colIdx]) {
-                  console.log('Índices inválidos para CKEditor:', {cIdx, colIdx, bIdx});
-                  return;
-                }
-                
-                const block = containers[cIdx].blocks[colIdx][bIdx];
-                
-                if (block && block.type === 'html') {
-                  if (ckEditorInstances[editorDiv.id]) {
-                    console.log('Editor já existe para:', editorDiv.id);
-                    return;
-                  }
-                  
-                  try {
-                    console.log('Tentando inicializar CKEditor 5 para:', editorDiv.id);
-                    
-                    // Configuração do CKEditor 5
-                    ClassicEditor
-                      .create(editorDiv, {
-                        toolbar: {
-                          items: [
-                            'heading',
-                            '|',
-                            'bold', 'italic', 'underline', 'strikethrough',
-                            '|',
-                            'fontColor', 'fontBackgroundColor',
-                            '|',
-                            'bulletedList', 'numberedList',
-                            '|',
-                            'alignment',
-                            '|',
-                            'link', 'image',
-                            '|',
-                            'insertTable',
-                            '|',
-                            'undo', 'redo'
-                          ]
-                        },
-                        table: {
-                          contentToolbar: [
-                            'tableColumn',
-                            'tableRow',
-                            'mergeTableCells'
-                          ]
-                        },
-                        placeholder: 'Digite seu texto aqui...'
-                      })
-                      .then(editor => {
-                        // Definir conteúdo inicial
-                        editor.setData(block.content || '');
-                        
-                        // Event listener para mudanças
-                        editor.model.document.on('change:data', () => {
-                          try {
-                            if (containers[cIdx] && containers[cIdx].blocks[colIdx] && containers[cIdx].blocks[colIdx][bIdx]) {
-                              containers[cIdx].blocks[colIdx][bIdx].content = editor.getData();
-                              renderPreview();
-                            }
-                          } catch (e) {
-                            console.log('Erro ao atualizar conteúdo:', e);
-                          }
-                        });
-                        
-                        // Salvar instância
-                        ckEditorInstances[editorDiv.id] = editor;
-                        console.log('CKEditor 5 criado com sucesso para:', editorDiv.id);
-                      })
-                      .catch(error => {
-                        console.error('Erro ao inicializar CKEditor 5:', error);
-                        setupTextareaFallback(editorDiv, cIdx, colIdx, bIdx);
-                      });
-                    
-                  } catch (e) {
-                    console.error('Erro crítico ao inicializar CKEditor 5:', e);
-                    setupTextareaFallback(editorDiv, cIdx, colIdx, bIdx);
-                  }
-                }
-              });
-            }
+                                       // Variável para controlar se já está inicializando
+           let isInitializing = false;
+           
+                     function initQuillEditors() {
+             if (isInitializing) {
+               console.log('Quill.js já está sendo inicializado, aguardando...');
+               return;
+             }
+             
+             if (typeof Quill === 'undefined') {
+               console.log('Quill.js ainda não foi carregado, aguardando...');
+               setTimeout(initQuillEditors, 1000);
+               return;
+             }
+             
+             console.log('Inicializando editores Quill.js...');
+             isInitializing = true;
+             
+             // Limpar instâncias existentes
+             Object.keys(quillInstances).forEach(id => {
+               if (quillInstances[id]) {
+                 try {
+                   quillInstances[id].destroy();
+                 } catch (e) {
+                   console.log('Erro ao destruir instância:', e);
+                 }
+               }
+             });
+             quillInstances = {};
+             
+             const editors = document.querySelectorAll('.quill-editor');
+             console.log(`Encontrados ${editors.length} editores para inicializar`);
+             
+             if (editors.length === 0) {
+               isInitializing = false;
+               return;
+             }
+             
+             // Inicializar todos os editores de uma vez (Quill.js é muito estável)
+             editors.forEach((editorDiv, index) => {
+               const [cIdx, colIdx, bIdx] = editorDiv.id.split('-').slice(1).map(Number);
+               
+               if (isNaN(cIdx) || isNaN(colIdx) || isNaN(bIdx) || 
+                   !containers[cIdx] || !containers[cIdx].blocks[colIdx]) {
+                 console.log('Índices inválidos para Quill:', {cIdx, colIdx, bIdx});
+                 return;
+               }
+               
+               const block = containers[cIdx].blocks[colIdx][bIdx];
+               
+               if (block && block.type === 'html') {
+                 if (quillInstances[editorDiv.id]) {
+                   console.log('Editor já existe para:', editorDiv.id);
+                   return;
+                 }
+                 
+                 try {
+                   console.log('Tentando inicializar Quill.js para:', editorDiv.id);
+                   
+                                       // Configuração do Quill.js
+                    const quill = new Quill(`#${editorDiv.id}`, {
+                      theme: 'snow',
+                      modules: {
+                        toolbar: [
+                          [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                          ['bold', 'italic', 'underline', 'strike'],
+                          [{ 'color': [] }, { 'background': [] }],
+                          [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                          [{ 'align': [] }],
+                          ['link', 'image'],
+                          ['clean']
+                        ]
+                      },
+                      placeholder: 'Digite seu texto aqui...'
+                    });
+                   
+                   // Definir conteúdo inicial
+                   quill.root.innerHTML = block.content || '';
+                   
+                   // Event listener para mudanças
+                   quill.on('text-change', function() {
+                     try {
+                       if (containers[cIdx] && containers[cIdx].blocks[colIdx] && containers[cIdx].blocks[colIdx][bIdx]) {
+                         containers[cIdx].blocks[colIdx][bIdx].content = quill.root.innerHTML;
+                         renderPreview();
+                       }
+                     } catch (e) {
+                       console.log('Erro ao atualizar conteúdo:', e);
+                     }
+                   });
+                   
+                   // Salvar instância
+                   quillInstances[editorDiv.id] = quill;
+                   console.log('Quill.js criado com sucesso para:', editorDiv.id);
+                   
+                 } catch (e) {
+                   console.error('Erro crítico ao inicializar Quill.js:', e);
+                   setupTextareaFallback(editorDiv, cIdx, colIdx, bIdx);
+                 }
+               }
+             });
+             
+             // Marcar como não inicializando
+             setTimeout(() => {
+               isInitializing = false;
+             }, 500);
+           }
      
            // Função para configurar fallback de textarea simples
       function setupTextareaFallback(editorDiv, cIdx, colIdx, bIdx) {
@@ -1685,31 +1732,28 @@
           container.blocks.forEach((col, colIdx) => {
             html += `<div class="${colClasses[container.cols][colIdx]}">\n`;
             col.forEach(block => {
-                             if (block.type === 'html') {
-                 // Preservar estrutura das tabelas do CKEditor 5
-                 let cleanContent = block.content;
-                 
-                 // Debug: ver o conteúdo antes da limpeza
-                 console.log('Conteúdo HTML antes da limpeza (renderPreview):', cleanContent);
-                 
-                 // Remover apenas atributos de estilo, preservando tags de tabela
-                 cleanContent = cleanContent.replace(/<table[^>]*>/g, '<table>');
-                 cleanContent = cleanContent.replace(/<td[^>]*>/g, '<td>');
-                 cleanContent = cleanContent.replace(/<tr[^>]*>/g, '<tr>');
-                 cleanContent = cleanContent.replace(/<th[^>]*>/g, '<th>');
-                 cleanContent = cleanContent.replace(/<tbody[^>]*>/g, '<tbody>');
-                 cleanContent = cleanContent.replace(/<figure[^>]*class="table"[^>]*>/g, '');
-                 cleanContent = cleanContent.replace(/<\/figure>/g, '');
-                 
-                 // Remover tags <p> vazias
-                 cleanContent = cleanContent.replace(/<p><br><\/p>/g, '');
-                 cleanContent = cleanContent.replace(/<p><\/p>/g, '');
-                 
-                 // Debug: ver o conteúdo após a limpeza
-                 console.log('Conteúdo HTML após a limpeza (renderPreview):', cleanContent);
-                 
-                 html += `${cleanContent}\n`;
-               }
+              if (block.type === 'html') {
+                // Preservar estrutura das tabelas, apenas remover estilos inline
+                let cleanContent = block.content;
+                
+                // Debug: ver o conteúdo antes da limpeza
+                console.log('Conteúdo HTML antes da limpeza:', cleanContent);
+                
+                // Remover apenas atributos de estilo, preservando tags de tabela
+                cleanContent = cleanContent.replace(/<table[^>]*>/g, '<table>');
+                cleanContent = cleanContent.replace(/<td[^>]*>/g, '<td>');
+                cleanContent = cleanContent.replace(/<tr[^>]*>/g, '<tr>');
+                cleanContent = cleanContent.replace(/<th[^>]*>/g, '<th>');
+                
+                // Remover tags <p> vazias que o Quill.js adiciona
+                cleanContent = cleanContent.replace(/<p><br><\/p>/g, '');
+                cleanContent = cleanContent.replace(/<p><\/p>/g, '');
+                
+                // Debug: ver o conteúdo após a limpeza
+                console.log('Conteúdo HTML após a limpeza:', cleanContent);
+                
+                html += `${cleanContent}\n`;
+              }
               if (block.type === 'image') {
                 if (block.link && block.link.trim()) {
                   html += `<a href="${block.link}" target="_blank"><img src="${block.content}" alt="Imagem" /></a>\n`;
@@ -1735,31 +1779,19 @@
           container.blocks.forEach((col, colIdx) => {
             html += `<div class="${colClasses[container.cols][colIdx]}">\n`;
             col.forEach(block => {
-                             if (block.type === 'html') {
-                 // Preservar estrutura das tabelas do CKEditor 5
-                 let cleanContent = block.content;
-                 
-                 // Debug: ver o conteúdo antes da limpeza
-                 console.log('Conteúdo HTML antes da limpeza (generateCode):', cleanContent);
-                 
-                 // Remover apenas atributos de estilo, preservando tags de tabela
-                 cleanContent = cleanContent.replace(/<table[^>]*>/g, '<table>');
-                 cleanContent = cleanContent.replace(/<td[^>]*>/g, '<td>');
-                 cleanContent = cleanContent.replace(/<tr[^>]*>/g, '<tr>');
-                 cleanContent = cleanContent.replace(/<th[^>]*>/g, '<th>');
-                 cleanContent = cleanContent.replace(/<tbody[^>]*>/g, '<tbody>');
-                 cleanContent = cleanContent.replace(/<figure[^>]*class="table"[^>]*>/g, '');
-                 cleanContent = cleanContent.replace(/<\/figure>/g, '');
-                 
-                 // Remover tags <p> vazias
-                 cleanContent = cleanContent.replace(/<p><br><\/p>/g, '');
-                 cleanContent = cleanContent.replace(/<p><\/p>/g, '');
-                 
-                 // Debug: ver o conteúdo após a limpeza
-                 console.log('Conteúdo HTML após a limpeza (generateCode):', cleanContent);
-                 
-                 html += `${cleanContent}\n`;
-               }
+              if (block.type === 'html') {
+                // Preservar estrutura das tabelas, apenas remover estilos inline
+                let cleanContent = block.content;
+                // Remover apenas atributos de estilo, preservando tags de tabela
+                cleanContent = cleanContent.replace(/<table[^>]*>/g, '<table>');
+                cleanContent = cleanContent.replace(/<td[^>]*>/g, '<td>');
+                cleanContent = cleanContent.replace(/<tr[^>]*>/g, '<tr>');
+                cleanContent = cleanContent.replace(/<th[^>]*>/g, '<th>');
+                // Remover tags <p> vazias que o Quill.js adiciona
+                cleanContent = cleanContent.replace(/<p><br><\/p>/g, '');
+                cleanContent = cleanContent.replace(/<p><\/p>/g, '');
+                html += `${cleanContent}\n`;
+              }
               if (block.type === 'image') {
                 if (block.link && block.link.trim()) {
                   html += `<a href="${block.link}" target="_blank"><img src="${block.content}" alt="Imagem" /></a>\n`;
@@ -1965,7 +1997,195 @@
       }
     }
 
-                   
+         // Funções para manipular tabelas manualmente
+           function insertTable(quillId) {
+        console.log('Tentando inserir tabela para:', quillId);
+        const quill = quillInstances[quillId];
+        if (quill) {
+          console.log('Quill encontrado, inserindo tabela...');
+          const range = quill.getSelection();
+          const index = range ? range.index : 0;
+          
+          // Inserir quebra de linha antes da tabela se não estiver no início
+          if (index > 0) {
+            quill.insertText(index, '\n');
+          }
+          
+          // Usar uma abordagem diferente - inserir texto e depois aplicar formatação
+          const insertIndex = index > 0 ? index + 1 : index;
+          
+          // Inserir o conteúdo da tabela como texto simples primeiro
+          quill.insertText(insertIndex, 'Linha 1, Coluna 1\tLinha 1, Coluna 2\nLinha 2, Coluna 1\tLinha 2, Coluna 2');
+          
+          // Agora vamos tentar forçar a criação da tabela usando o DOM
+          setTimeout(() => {
+            // Encontrar o texto inserido e convertê-lo em tabela
+            const editorContent = quill.root;
+            const textNodes = editorContent.querySelectorAll('p');
+            
+            // Procurar pelo texto que inserimos
+            for (let i = 0; i < textNodes.length; i++) {
+              const textNode = textNodes[i];
+              if (textNode.textContent.includes('Linha 1, Coluna 1')) {
+                // Criar a tabela
+                const table = document.createElement('table');
+                table.style.borderCollapse = 'collapse';
+                table.style.width = '100%';
+                table.style.margin = '15px 0';
+                table.style.border = '1px solid #dee2e6';
+                
+                // Primeira linha
+                const row1 = document.createElement('tr');
+                const cell1 = document.createElement('td');
+                cell1.textContent = 'Linha 1, Coluna 1';
+                cell1.style.border = '1px solid #dee2e6';
+                cell1.style.padding = '8px';
+                const cell2 = document.createElement('td');
+                cell2.textContent = 'Linha 1, Coluna 2';
+                cell2.style.border = '1px solid #dee2e6';
+                cell2.style.padding = '8px';
+                row1.appendChild(cell1);
+                row1.appendChild(cell2);
+                
+                // Segunda linha
+                const row2 = document.createElement('tr');
+                const cell3 = document.createElement('td');
+                cell3.textContent = 'Linha 2, Coluna 1';
+                cell3.style.border = '1px solid #dee2e6';
+                cell3.style.padding = '8px';
+                const cell4 = document.createElement('td');
+                cell4.textContent = 'Linha 2, Coluna 2';
+                cell4.style.border = '1px solid #dee2e6';
+                cell4.style.padding = '8px';
+                row2.appendChild(cell3);
+                row2.appendChild(cell4);
+                
+                table.appendChild(row1);
+                table.appendChild(row2);
+                
+                // Substituir o texto pela tabela
+                textNode.parentNode.replaceChild(table, textNode);
+                
+                // Atualizar o Quill
+                quill.updateContents();
+                console.log('Tabela criada via DOM com sucesso!');
+                break;
+              }
+            }
+          }, 200);
+          
+        } else {
+          console.log('Quill não encontrado para:', quillId);
+        }
+      }
+
+                           function insertTableRow(quillId) {
+         const quill = quillInstances[quillId];
+         if (quill) {
+           const range = quill.getSelection();
+           if (range) {
+             // Encontrar a linha da tabela onde está o cursor
+             const [leaf] = quill.getLeaf(range.index);
+             const tableRow = leaf.domNode.closest('tr');
+             if (tableRow) {
+               // Inserir nova linha após a linha atual
+               const table = tableRow.closest('table');
+               if (table) {
+                 const newRow = document.createElement('tr');
+                 const colCount = tableRow.children.length;
+                 
+                 // Criar células para a nova linha
+                 for (let i = 0; i < colCount; i++) {
+                   const newCell = document.createElement('td');
+                   newCell.textContent = 'Nova linha';
+                   newRow.appendChild(newCell);
+                 }
+                 
+                 tableRow.after(newRow);
+                 
+                 // Atualizar o conteúdo no Quill
+                 quill.updateContents();
+               }
+             }
+           }
+         }
+       }
+     
+                       function insertTableColumn(quillId) {
+         const quill = quillInstances[quillId];
+         if (quill) {
+           const range = quill.getSelection();
+           if (range) {
+             // Encontrar a célula da tabela onde está o cursor
+             const [leaf] = quill.getLeaf(range.index);
+             const tableCell = leaf.domNode.closest('td, th');
+             if (tableCell) {
+               // Inserir nova coluna após a coluna atual
+               const tableRow = tableCell.parentElement;
+               const newCell = document.createElement('td');
+               newCell.textContent = 'Nova coluna';
+               tableCell.after(newCell);
+               
+               // Atualizar o conteúdo no Quill
+               quill.updateContents();
+             }
+           }
+         }
+       }
+
+      function deleteTableRow(quillId) {
+        const quill = quillInstances[quillId];
+        if (quill) {
+          const range = quill.getSelection();
+          if (range) {
+            // Encontrar a linha da tabela onde está o cursor
+            const [leaf] = quill.getLeaf(range.index);
+            const tableRow = leaf.domNode.closest('tr');
+            if (tableRow) {
+              tableRow.remove();
+            }
+          }
+        }
+      }
+
+      function deleteTableColumn(quillId) {
+        const quill = quillInstances[quillId];
+        if (quill) {
+          const range = quill.getSelection();
+          if (range) {
+            // Encontrar a célula da tabela onde está o cursor
+            const [leaf] = quill.getLeaf(range.index);
+            const tableCell = leaf.domNode.closest('td, th');
+            if (tableCell) {
+              const columnIndex = Array.from(tableCell.parentElement.children).indexOf(tableCell);
+              // Remover todas as células da mesma coluna
+              const table = tableCell.closest('table');
+              if (table) {
+                const rows = table.querySelectorAll('tr');
+                rows.forEach(row => {
+                  const cell = row.children[columnIndex];
+                  if (cell) cell.remove();
+                });
+              }
+            }
+          }
+        }
+      }
+
+      function deleteTable(quillId) {
+        const quill = quillInstances[quillId];
+        if (quill) {
+          const range = quill.getSelection();
+          if (range) {
+            // Encontrar a tabela onde está o cursor
+            const [leaf] = quill.getLeaf(range.index);
+            const table = leaf.domNode.closest('table');
+            if (table) {
+              table.remove();
+            }
+          }
+        }
+      }
       
       // Carregar projeto automaticamente ao iniciar (se existir)
      function autoLoadProject() {

@@ -338,57 +338,44 @@
       color: white;
     }
     
-                                       .quill-editor { 
-         height: 300px; 
-         margin-bottom: 15px;
-         border-radius: 8px;
+                   .tinymce-editor { 
+        height: 300px; 
+        margin-bottom: 15px;
+        border-radius: 8px;
+      }
+      
+                           /* Garantir que o TinyMCE seja visível (versão 6.x) */
+       .mce-tinymce {
+         display: block !important;
+         visibility: visible !important;
+         opacity: 1 !important;
        }
        
-               /* Estilos para o CKEditor 5 */
-        .ck-editor {
-          margin-bottom: 15px;
-        }
-        
-        .ck-editor__editable {
-          min-height: 250px;
-          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-          font-size: 14px;
-          line-height: 1.6;
-          border-radius: 8px;
-        }
-        
-        .ck-toolbar {
-          border-top-left-radius: 8px;
-          border-top-right-radius: 8px;
-          border-color: #ced4da;
-        }
-        
-        .ck-content {
-          border-bottom-left-radius: 8px;
-          border-bottom-right-radius: 8px;
-          border-color: #ced4da;
-        }
-        
-        /* Estilos para tabelas no CKEditor */
-        .ck-editor__editable table {
-          border-collapse: collapse;
-          width: 100%;
-          margin: 15px 0;
-          border: 1px solid #dee2e6;
-        }
-        
-        .ck-editor__editable table td,
-        .ck-editor__editable table th {
-          padding: 8px;
-          text-align: left;
-          vertical-align: top;
-          border: 1px solid #dee2e6;
-        }
-        
-        .ck-editor__editable table th {
-          background-color: #f8f9fa;
-          font-weight: 600;
-        }
+       .mce-container {
+         display: block !important;
+         visibility: visible !important;
+         opacity: 1 !important;
+       }
+       
+       .mce-edit-area {
+         display: block !important;
+         visibility: visible !important;
+         opacity: 1 !important;
+       }
+    
+         /* Estilos básicos para tabelas no editor TinyMCE */
+     .mce-content-body table {
+       border-collapse: collapse;
+       width: 100%;
+       margin: 15px 0;
+     }
+     
+     .mce-content-body table td,
+     .mce-content-body table th {
+       padding: 8px;
+       text-align: left;
+       vertical-align: top;
+     }
     
     img { 
       max-width: 100%; 
@@ -459,9 +446,68 @@
       .push-5-cols .col { flex: 0 0 calc(20% - 8px); }
     }
 
-         
+    /* Estilos para a nova estrutura de tabela */
+    .table-controls {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      border: 1px solid #dee2e6;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      align-items: center;
+    }
 
-    
+    .table-controls button {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      margin: 2px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-weight: 500;
+    }
+
+    .table-controls button:hover {
+      background: #5a6fd8;
+      transform: scale(1.05);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .table-controls button.delete {
+      background: #dc3545;
+    }
+
+    .table-controls button.delete:hover {
+      background: #c82333;
+    }
+
+    .table-controls button.add {
+      background: #28a745;
+    }
+
+    .table-controls button.add:hover {
+      background: #218838;
+    }
+
+    .table-controls button.insert {
+      background: #17a2b8;
+    }
+
+    .table-controls button.insert:hover {
+      background: #138496;
+    }
+
+    .table-controls button i {
+      font-size: 11px;
+    }
 
     /* Estilos para funcionalidades de container */
     .container-actions {
@@ -881,20 +927,17 @@
     </div>
   </div>
 
-           <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-      
-      <!-- CKEditor 5 - Editor profissional com excelente suporte para tabelas -->
-      <script src="https://cdn.ckeditor.com/ckeditor5/40.1.0/classic/ckeditor.js"></script>
-
+     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+               <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.7.3/tinymce.min.js"></script>
   <script>
-                                       // Configuração do CKEditor 5
-       console.log('Inicializando CKEditor 5...');
-     
-                    let containers = [];
-       let ckEditorInstances = {};
-       let draggedElement = null;
-       let draggedContainer = null;
-       let containerCollapseStates = [];
+         // Configuração do TinyMCE
+     console.log('Inicializando TinyMCE...');
+    
+         let containers = [];
+     let tinymceInstances = {};
+     let draggedElement = null;
+     let draggedContainer = null;
+     let containerCollapseStates = [];
 
     // Classes para colunas responsivas e espaçamento
     const colClasses = {
@@ -1247,9 +1290,9 @@
        console.log('Renderizando builder...');
        console.log('Containers:', containers);
        
-               const builder = document.getElementById('builder');
-        builder.innerHTML = '';
-                                   ckEditorInstances = {}; // Reset
+       const builder = document.getElementById('builder');
+       builder.innerHTML = '';
+                tinymceInstances = {}; // Reset
       
       containers.forEach((container, cIdx) => {
         let html = `<div class="container-item ${(containerCollapseStates[cIdx] || 'expanded') === 'collapsed' ? 'collapsed' : ''}" data-container-id="${cIdx}">
@@ -1305,13 +1348,12 @@
                      col.forEach((block, bIdx) => {
              html += `<div class="bloco" data-container="${cIdx}" data-col="${colIdx}" data-block="${bIdx}">
                <div class="drag-handle" draggable="true">⋮⋮ Arrastar</div>`;
-                                                     if (block.type === 'html') {
-                 const quillId = `quill-${cIdx}-${colIdx}-${bIdx}`;
-                 console.log('Renderizando bloco HTML:', {cIdx, colIdx, bIdx, quillId, content: block.content});
-                                   html += `<label class="form-label">Texto avançado (editor visual):</label>
-                                      
-                                                                             <div id="${quillId}" class="ck-editor">${block.content || ''}</div>`;
-               }
+                          if (block.type === 'html') {
+                const tinymceId = `tinymce-${cIdx}-${colIdx}-${bIdx}`;
+                console.log('Renderizando bloco HTML:', {cIdx, colIdx, bIdx, tinymceId, content: block.content});
+                html += `<label class="form-label">Texto avançado (editor visual):</label>
+                                    <textarea id="${tinymceId}" class="tinymce-editor" style="display: none;">${block.content || ''}</textarea>`;
+              }
             if (block.type === 'image') {
               html += `<div class="form-group">
                 <label class="form-label">URL da imagem:</label>
@@ -1348,14 +1390,14 @@
          initContainerDragAndDrop();
        }, 100);
        
-                                                               // Inicializar CKEditor 5 com delay para garantir que o DOM esteja pronto
+               // Inicializar TinyMCE com delay maior para garantir que o DOM esteja pronto
+        setTimeout(() => {
+          console.log('Iniciando TinyMCE após renderização...');
+          // Aguardar um pouco mais para garantir que o DOM esteja completamente pronto
           setTimeout(() => {
-            console.log('Iniciando CKEditor 5 após renderização...');
-            // Aguardar um pouco mais para garantir que o DOM esteja completamente pronto
-            setTimeout(() => {
-              initCKEditorInstances();
-            }, 300);
-          }, 800);
+            initTinyMCEEditors();
+          }, 300);
+        }, 800);
       
       renderPreview();
       console.log('Builder renderizado com sucesso!');
@@ -1531,250 +1573,266 @@
       });
     }
 
-                                                                               // Função para inicializar instâncias do CKEditor 5
-            function initCKEditorInstances() {
-              console.log('Inicializando editores CKEditor 5...');
-              
-              // Limpar instâncias existentes
-              Object.keys(ckEditorInstances).forEach(id => {
-                if (ckEditorInstances[id]) {
-                  try {
-                    ckEditorInstances[id].destroy();
-                  } catch (e) {
-                    console.log('Erro ao destruir instância:', e);
-                  }
+                   // Variável para controlar se já está inicializando
+          let isInitializing = false;
+          
+                    function initTinyMCEEditors() {
+            if (isInitializing) {
+              console.log('TinyMCE já está sendo inicializado, aguardando...');
+              return;
+            }
+            
+            if (typeof tinymce === 'undefined') {
+              console.log('TinyMCE ainda não foi carregado, aguardando...');
+              setTimeout(initTinyMCEEditors, 1000);
+              return;
+            }
+            
+            console.log('Inicializando editores TinyMCE 6.x...');
+            isInitializing = true;
+            
+            // Limpar instâncias existentes
+            Object.keys(tinymceInstances).forEach(id => {
+              if (tinymceInstances[id]) {
+                try {
+                  tinymceInstances[id].destroy();
+                } catch (e) {
+                  console.log('Erro ao destruir instância:', e);
                 }
-              });
-              ckEditorInstances = {};
-              
-              const editors = document.querySelectorAll('.ck-editor');
-              console.log(`Encontrados ${editors.length} editores para inicializar`);
-              
-              if (editors.length === 0) {
-                return;
               }
-              
-              // Inicializar todos os editores
-              editors.forEach((editorDiv, index) => {
-                const [cIdx, colIdx, bIdx] = editorDiv.id.split('-').slice(1).map(Number);
-                
-                if (isNaN(cIdx) || isNaN(colIdx) || isNaN(bIdx) || 
-                    !containers[cIdx] || !containers[cIdx].blocks[colIdx]) {
-                  console.log('Índices inválidos para CKEditor:', {cIdx, colIdx, bIdx});
-                  return;
-                }
-                
-                const block = containers[cIdx].blocks[colIdx][bIdx];
-                
-                if (block && block.type === 'html') {
-                  if (ckEditorInstances[editorDiv.id]) {
-                    console.log('Editor já existe para:', editorDiv.id);
-                    return;
-                  }
-                  
-                  try {
-                    console.log('Tentando inicializar CKEditor 5 para:', editorDiv.id);
-                    
-                    // Configuração do CKEditor 5
-                    ClassicEditor
-                      .create(editorDiv, {
-                        toolbar: {
-                          items: [
-                            'heading',
-                            '|',
-                            'bold', 'italic', 'underline', 'strikethrough',
-                            '|',
-                            'fontColor', 'fontBackgroundColor',
-                            '|',
-                            'bulletedList', 'numberedList',
-                            '|',
-                            'alignment',
-                            '|',
-                            'link', 'image',
-                            '|',
-                            'insertTable',
-                            '|',
-                            'undo', 'redo'
-                          ]
-                        },
-                        table: {
-                          contentToolbar: [
-                            'tableColumn',
-                            'tableRow',
-                            'mergeTableCells'
-                          ]
-                        },
-                        placeholder: 'Digite seu texto aqui...'
-                      })
-                      .then(editor => {
-                        // Definir conteúdo inicial
-                        editor.setData(block.content || '');
-                        
-                        // Event listener para mudanças
-                        editor.model.document.on('change:data', () => {
-                          try {
-                            if (containers[cIdx] && containers[cIdx].blocks[colIdx] && containers[cIdx].blocks[colIdx][bIdx]) {
-                              containers[cIdx].blocks[colIdx][bIdx].content = editor.getData();
-                              renderPreview();
-                            }
-                          } catch (e) {
-                            console.log('Erro ao atualizar conteúdo:', e);
-                          }
-                        });
-                        
-                        // Salvar instância
-                        ckEditorInstances[editorDiv.id] = editor;
-                        console.log('CKEditor 5 criado com sucesso para:', editorDiv.id);
-                      })
-                      .catch(error => {
-                        console.error('Erro ao inicializar CKEditor 5:', error);
-                        setupTextareaFallback(editorDiv, cIdx, colIdx, bIdx);
-                      });
-                    
-                  } catch (e) {
-                    console.error('Erro crítico ao inicializar CKEditor 5:', e);
-                    setupTextareaFallback(editorDiv, cIdx, colIdx, bIdx);
-                  }
-                }
-              });
+            });
+            tinymceInstances = {};
+            
+            const editors = document.querySelectorAll('.tinymce-editor');
+            console.log(`Encontrados ${editors.length} editores para inicializar`);
+            
+            if (editors.length === 0) {
+              isInitializing = false;
+              return;
             }
-     
-           // Função para configurar fallback de textarea simples
-      function setupTextareaFallback(editorDiv, cIdx, colIdx, bIdx) {
-        console.log('Configurando fallback de textarea para:', editorDiv.id);
-        
-        // Criar um textarea como fallback
-        const textarea = document.createElement('textarea');
-        textarea.className = 'form-control';
-        textarea.style.height = '300px';
-        textarea.value = containers[cIdx]?.blocks[colIdx]?.[bIdx]?.content || '';
-        textarea.placeholder = 'Editor Quill.js não disponível - usando textarea simples';
-        
-        // Substituir o div do Quill pelo textarea
-        editorDiv.innerHTML = '';
-        editorDiv.appendChild(textarea);
-        
-        // Configurar event listener
-        textarea.addEventListener('input', function() {
-          try {
-            if (containers[cIdx] && containers[cIdx].blocks[colIdx] && containers[cIdx].blocks[colIdx][bIdx]) {
-              containers[cIdx].blocks[colIdx][bIdx].content = this.value;
-              renderPreview();
-            }
-          } catch (e) {
-            console.log('Erro ao atualizar conteúdo do fallback:', e);
+            
+                         // Inicializar editores sequencialmente para evitar conflitos
+             let currentIndex = 0;
+             
+             function initNextEditor() {
+               if (currentIndex >= editors.length) {
+                 isInitializing = false;
+                 return;
+               }
+               
+               const textarea = editors[currentIndex];
+               const [cIdx, colIdx, bIdx] = textarea.id.split('-').slice(1).map(Number);
+               
+               if (isNaN(cIdx) || isNaN(colIdx) || isNaN(bIdx) || 
+                   !containers[cIdx] || !containers[cIdx].blocks[colIdx]) {
+                 console.log('Índices inválidos para TinyMCE:', {cIdx, colIdx, bIdx});
+                 currentIndex++;
+                 initNextEditor();
+                 return;
+               }
+               
+               const block = containers[cIdx].blocks[colIdx][bIdx];
+               
+               if (block && block.type === 'html') {
+                 if (tinymceInstances[textarea.id]) {
+                   console.log('Editor já existe para:', textarea.id);
+                   currentIndex++;
+                   initNextEditor();
+                   return;
+                 }
+                 
+                 // Configuração específica para cada editor (versão 6.x)
+                 const config = {
+                   selector: `#${textarea.id}`,
+                   height: 300,
+                   menubar: false,
+                   readonly: false,
+                   branding: false,
+                   inline: false,
+                   plugins: [
+                     'lists', 'link', 'image', 'table'
+                   ],
+                   toolbar: 'undo redo | formatselect | ' +
+                     'bold italic | alignleft aligncenter ' +
+                     'alignright alignjustify | bullist numlist | ' +
+                     'removeformat | table | h1 h2 h3 h4 h5 h6',
+                   content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+                   table_toolbar: 'tableprops tabledelete | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol',
+                   table_default_attributes: {
+                     border: '1'
+                   },
+                   table_default_styles: {
+                     'border-collapse': 'collapse',
+                     'width': '100%'
+                   },
+                   table_resize_bars: false,
+                   table_column_resizing: 'preservetable',
+                   table_cell_adv_tab: false,
+                   table_cell_class_list: [
+                     {title: 'None', value: ''}
+                   ],
+                   table_row_class_list: [
+                     {title: 'None', value: ''}
+                   ],
+                   table_class_list: [
+                     {title: 'None', value: ''}
+                   ],
+                   init_instance_callback: function(editor) {
+                     console.log('TinyMCE 6.x inicializado para:', textarea.id);
+                     
+                     editor.on('change keyup', function() {
+                       try {
+                         if (containers[cIdx] && containers[cIdx].blocks[colIdx] && containers[cIdx].blocks[colIdx][bIdx]) {
+                           containers[cIdx].blocks[colIdx][bIdx].content = editor.getContent();
+                           renderPreview();
+                         }
+                       } catch (e) {
+                         console.log('Erro ao atualizar conteúdo:', e);
+                       }
+                     });
+                   }
+                 };
+                 
+                 try {
+                   console.log('Tentando inicializar TinyMCE para:', textarea.id);
+                   
+                   tinymce.init(config).then(function(editors) {
+                     if (editors && editors.length > 0) {
+                       tinymceInstances[textarea.id] = editors[0];
+                       console.log('TinyMCE criado com sucesso para:', textarea.id);
+                       textarea.style.display = 'none';
+                     } else {
+                       console.log('Nenhum editor retornado para:', textarea.id);
+                       textarea.style.display = 'block';
+                       setupTextareaFallback(textarea, cIdx, colIdx, bIdx);
+                     }
+                     
+                     // Inicializar próximo editor após um delay
+                     currentIndex++;
+                     setTimeout(initNextEditor, 500);
+                   }).catch(function(error) {
+                     console.error('Erro ao inicializar TinyMCE para', textarea.id, ':', error);
+                     textarea.style.display = 'block';
+                     setupTextareaFallback(textarea, cIdx, colIdx, bIdx);
+                     
+                     // Continuar com próximo editor mesmo em caso de erro
+                     currentIndex++;
+                     setTimeout(initNextEditor, 500);
+                   });
+                 } catch (e) {
+                   console.error('Erro crítico ao inicializar TinyMCE:', e);
+                   textarea.style.display = 'block';
+                   setupTextareaFallback(textarea, cIdx, colIdx, bIdx);
+                   
+                   // Continuar com próximo editor mesmo em caso de erro
+                   currentIndex++;
+                   setTimeout(initNextEditor, 500);
+                 }
+               } else {
+                 currentIndex++;
+                 initNextEditor();
+               }
+             }
+             
+                          // Iniciar sequência de inicialização
+             initNextEditor();
           }
-        });
-        
-        // Adicionar estilo para indicar que é um fallback
-        textarea.style.border = '2px solid #ffc107';
-        textarea.style.backgroundColor = '#fff3cd';
-        
-        console.log('Fallback configurado com sucesso para:', editorDiv.id);
-      }
+     
+     // Função para configurar fallback de textarea simples
+     function setupTextareaFallback(textarea, cIdx, colIdx, bIdx) {
+       console.log('Configurando fallback de textarea para:', textarea.id);
+       
+       // Garantir que o textarea esteja visível
+       textarea.style.display = 'block';
+       
+       // Configurar event listener
+       textarea.addEventListener('input', function() {
+         try {
+           if (containers[cIdx] && containers[cIdx].blocks[colIdx] && containers[cIdx].blocks[colIdx][bIdx]) {
+             containers[cIdx].blocks[colIdx][bIdx].content = this.value;
+             renderPreview();
+           }
+         } catch (e) {
+           console.log('Erro ao atualizar conteúdo do fallback:', e);
+         }
+       });
+       
+       // Adicionar estilo para indicar que é um fallback
+       textarea.style.border = '2px solid #ffc107';
+       textarea.style.backgroundColor = '#fff3cd';
+       textarea.placeholder = 'Editor TinyMCE não disponível - usando textarea simples';
+       
+       console.log('Fallback configurado com sucesso para:', textarea.id);
+     }
 
 
 
-                   function renderPreview() {
-        const preview = document.getElementById('preview');
-        let html = '<div class="page-builder-push"><div class="container">';
-        containers.forEach((container) => {
-          const containerClass = containerClasses[container.cols];
-          const customClass = container.customClass ? ` ${container.customClass}` : '';
-          html += `<div class="row ${containerClass}${customClass}">\n`;
-          container.blocks.forEach((col, colIdx) => {
-            html += `<div class="${colClasses[container.cols][colIdx]}">\n`;
-            col.forEach(block => {
-                             if (block.type === 'html') {
-                 // Preservar estrutura das tabelas do CKEditor 5
-                 let cleanContent = block.content;
-                 
-                 // Debug: ver o conteúdo antes da limpeza
-                 console.log('Conteúdo HTML antes da limpeza (renderPreview):', cleanContent);
-                 
-                 // Remover apenas atributos de estilo, preservando tags de tabela
-                 cleanContent = cleanContent.replace(/<table[^>]*>/g, '<table>');
-                 cleanContent = cleanContent.replace(/<td[^>]*>/g, '<td>');
-                 cleanContent = cleanContent.replace(/<tr[^>]*>/g, '<tr>');
-                 cleanContent = cleanContent.replace(/<th[^>]*>/g, '<th>');
-                 cleanContent = cleanContent.replace(/<tbody[^>]*>/g, '<tbody>');
-                 cleanContent = cleanContent.replace(/<figure[^>]*class="table"[^>]*>/g, '');
-                 cleanContent = cleanContent.replace(/<\/figure>/g, '');
-                 
-                 // Remover tags <p> vazias
-                 cleanContent = cleanContent.replace(/<p><br><\/p>/g, '');
-                 cleanContent = cleanContent.replace(/<p><\/p>/g, '');
-                 
-                 // Debug: ver o conteúdo após a limpeza
-                 console.log('Conteúdo HTML após a limpeza (renderPreview):', cleanContent);
-                 
-                 html += `${cleanContent}\n`;
+         function renderPreview() {
+       const preview = document.getElementById('preview');
+       let html = '<div class="page-builder-push"><div class="container">';
+       containers.forEach((container) => {
+         const containerClass = containerClasses[container.cols];
+         const customClass = container.customClass ? ` ${container.customClass}` : '';
+         html += `<div class="row ${containerClass}${customClass}">\n`;
+         container.blocks.forEach((col, colIdx) => {
+           html += `<div class="${colClasses[container.cols][colIdx]}">\n`;
+           col.forEach(block => {
+             if (block.type === 'html') {
+               // Limpar HTML das tabelas removendo controles de largura
+               let cleanContent = block.content;
+               cleanContent = cleanContent.replace(/<table[^>]*>/g, '<table>');
+               cleanContent = cleanContent.replace(/<td[^>]*>/g, '<td>');
+               cleanContent = cleanContent.replace(/<th[^>]*>/g, '<th>');
+               html += `${cleanContent}\n`;
+             }
+             if (block.type === 'image') {
+               if (block.link && block.link.trim()) {
+                 html += `<a href="${block.link}" target="_blank"><img src="${block.content}" alt="Imagem" /></a>\n`;
+               } else {
+                 html += `<img src="${block.content}" alt="Imagem" />\n`;
                }
-              if (block.type === 'image') {
-                if (block.link && block.link.trim()) {
-                  html += `<a href="${block.link}" target="_blank"><img src="${block.content}" alt="Imagem" /></a>\n`;
-                } else {
-                  html += `<img src="${block.content}" alt="Imagem" />\n`;
-                }
-              }
-            });
-            html += `</div>\n`;
-          });
-          html += `</div>\n`;
-        });
-        html += '</div></div>';
-        preview.innerHTML = html;
-      }
+             }
+           });
+           html += `</div>\n`;
+         });
+         html += `</div>\n`;
+       });
+       html += '</div></div>';
+       preview.innerHTML = html;
+     }
 
-                   function generateCode() {
-        let html = '<div class="page-builder-push"><div class="container">';
-        containers.forEach((container) => {
-          const containerClass = containerClasses[container.cols];
-          const customClass = container.customClass ? ` ${container.customClass}` : '';
-          html += `<div class="row ${containerClass}${customClass}">\n`;
-          container.blocks.forEach((col, colIdx) => {
-            html += `<div class="${colClasses[container.cols][colIdx]}">\n`;
-            col.forEach(block => {
-                             if (block.type === 'html') {
-                 // Preservar estrutura das tabelas do CKEditor 5
-                 let cleanContent = block.content;
-                 
-                 // Debug: ver o conteúdo antes da limpeza
-                 console.log('Conteúdo HTML antes da limpeza (generateCode):', cleanContent);
-                 
-                 // Remover apenas atributos de estilo, preservando tags de tabela
-                 cleanContent = cleanContent.replace(/<table[^>]*>/g, '<table>');
-                 cleanContent = cleanContent.replace(/<td[^>]*>/g, '<td>');
-                 cleanContent = cleanContent.replace(/<tr[^>]*>/g, '<tr>');
-                 cleanContent = cleanContent.replace(/<th[^>]*>/g, '<th>');
-                 cleanContent = cleanContent.replace(/<tbody[^>]*>/g, '<tbody>');
-                 cleanContent = cleanContent.replace(/<figure[^>]*class="table"[^>]*>/g, '');
-                 cleanContent = cleanContent.replace(/<\/figure>/g, '');
-                 
-                 // Remover tags <p> vazias
-                 cleanContent = cleanContent.replace(/<p><br><\/p>/g, '');
-                 cleanContent = cleanContent.replace(/<p><\/p>/g, '');
-                 
-                 // Debug: ver o conteúdo após a limpeza
-                 console.log('Conteúdo HTML após a limpeza (generateCode):', cleanContent);
-                 
-                 html += `${cleanContent}\n`;
+         function generateCode() {
+       let html = '<div class="page-builder-push"><div class="container">';
+       containers.forEach((container) => {
+         const containerClass = containerClasses[container.cols];
+         const customClass = container.customClass ? ` ${container.customClass}` : '';
+         html += `<div class="row ${containerClass}${customClass}">\n`;
+         container.blocks.forEach((col, colIdx) => {
+           html += `<div class="${colClasses[container.cols][colIdx]}">\n`;
+           col.forEach(block => {
+             if (block.type === 'html') {
+               // Limpar HTML das tabelas removendo controles de largura
+               let cleanContent = block.content;
+               cleanContent = cleanContent.replace(/<table[^>]*>/g, '<table>');
+               cleanContent = cleanContent.replace(/<td[^>]*>/g, '<td>');
+               cleanContent = cleanContent.replace(/<th[^>]*>/g, '<th>');
+               html += `${cleanContent}\n`;
+             }
+             if (block.type === 'image') {
+               if (block.link && block.link.trim()) {
+                 html += `<a href="${block.link}" target="_blank"><img src="${block.content}" alt="Imagem" /></a>\n`;
+               } else {
+                 html += `<img src="${block.content}" alt="Imagem" />\n`;
                }
-              if (block.type === 'image') {
-                if (block.link && block.link.trim()) {
-                  html += `<a href="${block.link}" target="_blank"><img src="${block.content}" alt="Imagem" /></a>\n`;
-                } else {
-                  html += `<img src="${block.content}" alt="Imagem" />\n`;
-                }
-              }
-            });
-            html += `</div>\n`;
-          });
-          html += `</div>\n`;
-        });
-        html += '</div></div>';
-        document.getElementById('output').value = html;
-      }
+             }
+           });
+           html += `</div>\n`;
+         });
+         html += `</div>\n`;
+       });
+       html += '</div></div>';
+       document.getElementById('output').value = html;
+     }
 
     function copyCode() {
       const output = document.getElementById('output');
@@ -1965,10 +2023,8 @@
       }
     }
 
-                   
-      
-      // Carregar projeto automaticamente ao iniciar (se existir)
-     function autoLoadProject() {
+    // Carregar projeto automaticamente ao iniciar (se existir)
+    function autoLoadProject() {
       try {
         const savedData = localStorage.getItem('pagebuilder_project');
         if (savedData) {
