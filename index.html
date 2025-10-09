@@ -456,7 +456,22 @@
       .push-2-cols .col { flex: 0 0 calc(50% - 8px); }
       .push-3-cols .col { flex: 0 0 calc(33.333% - 8px); }
       .push-4-cols .col { flex: 0 0 calc(25% - 8px); }
-      .push-5-cols .col { flex: 0 0 calc(20% - 8px); }
+      .push-5-cols .col { flex: 0 0 calc(20% - 8px); max-width: calc(20% - 8px); }
+    }
+    
+    /* Melhorar visualização de 5 colunas no editor */
+    .push-5-cols .col .bloco {
+      font-size: 13px;
+    }
+    
+    .push-5-cols .col .ck-editor__editable {
+      min-height: 200px;
+      font-size: 13px;
+    }
+    
+    .push-5-cols .col .form-control {
+      font-size: 12px;
+      padding: 8px;
     }
 
          
@@ -643,7 +658,77 @@
               transform: none;
             }
 
+            /* Botão para editar HTML do bloco */
+            .btn-edit-html {
+              background: #6f42c1;
+              color: white;
+              border: none;
+              padding: 6px 12px;
+              border-radius: 15px;
+              font-size: 11px;
+              transition: all 0.3s ease;
+              cursor: pointer;
+              display: flex;
+              align-items: center;
+              gap: 4px;
+              margin-bottom: 10px;
+            }
 
+            .btn-edit-html:hover {
+              background: #5a32a3;
+              transform: scale(1.05);
+            }
+
+            /* Modal para edição de HTML */
+            .html-editor-modal {
+              display: none;
+              position: fixed;
+              z-index: 2000;
+              left: 0;
+              top: 0;
+              width: 100%;
+              height: 100%;
+              background-color: rgba(0,0,0,0.5);
+            }
+
+            .html-editor-modal.show {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            }
+
+            .html-editor-content {
+              background-color: white;
+              padding: 30px;
+              border-radius: 15px;
+              width: 90%;
+              max-width: 800px;
+              max-height: 80vh;
+              overflow-y: auto;
+              box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            }
+
+            .html-editor-content h4 {
+              color: #2c3e50;
+              margin-bottom: 20px;
+            }
+
+            .html-editor-content textarea {
+              width: 100%;
+              min-height: 400px;
+              font-family: 'Courier New', monospace;
+              font-size: 14px;
+              border: 2px solid #e9ecef;
+              border-radius: 8px;
+              padding: 15px;
+              margin-bottom: 15px;
+            }
+
+            .html-editor-buttons {
+              display: flex;
+              gap: 10px;
+              justify-content: flex-end;
+            }
 
             /* Menu flutuante de gerenciamento de dados */
             .floating-menu {
@@ -877,6 +962,22 @@
             <i class="fas fa-trash"></i> Limpar Dados
           </button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para edição de HTML -->
+  <div id="htmlEditorModal" class="html-editor-modal">
+    <div class="html-editor-content">
+      <h4><i class="fas fa-code"></i> Editar HTML</h4>
+      <textarea id="htmlEditorTextarea" placeholder="Cole ou edite o HTML aqui..."></textarea>
+      <div class="html-editor-buttons">
+        <button onclick="closeHtmlEditor()" class="btn-remove">
+          <i class="fas fa-times"></i> Cancelar
+        </button>
+        <button onclick="saveHtmlEditor()" class="btn-add">
+          <i class="fas fa-check"></i> Salvar
+        </button>
       </div>
     </div>
   </div>
@@ -1305,13 +1406,15 @@
                      col.forEach((block, bIdx) => {
              html += `<div class="bloco" data-container="${cIdx}" data-col="${colIdx}" data-block="${bIdx}">
                <div class="drag-handle" draggable="true">⋮⋮ Arrastar</div>`;
-                                                     if (block.type === 'html') {
-                 const quillId = `quill-${cIdx}-${colIdx}-${bIdx}`;
-                 console.log('Renderizando bloco HTML:', {cIdx, colIdx, bIdx, quillId, content: block.content});
-                                   html += `<label class="form-label">Texto avançado (editor visual):</label>
-                                      
-                                                                             <div id="${quillId}" class="ck-editor">${block.content || ''}</div>`;
-               }
+                                                    if (block.type === 'html') {
+                const quillId = `quill-${cIdx}-${colIdx}-${bIdx}`;
+                console.log('Renderizando bloco HTML:', {cIdx, colIdx, bIdx, quillId, content: block.content});
+                                  html += `<label class="form-label">Texto avançado (editor visual):</label>
+                                     <button type="button" onclick="openHtmlEditor(${cIdx}, ${colIdx}, ${bIdx})" class="btn-edit-html">
+                                       <i class="fas fa-code"></i> Editar HTML
+                                     </button>
+                                                                            <div id="${quillId}" class="ck-editor">${block.content || ''}</div>`;
+              }
             if (block.type === 'image') {
               html += `<div class="form-group">
                 <label class="form-label">URL da imagem:</label>
@@ -1590,11 +1693,22 @@
                             '|',
                             'alignment',
                             '|',
-                            'link', 'image',
+                            'link', 'imageInsert',
                             '|',
                             'insertTable',
                             '|',
                             'undo', 'redo'
+                          ]
+                        },
+                        heading: {
+                          options: [
+                            { model: 'paragraph', title: 'Parágrafo', class: 'ck-heading_paragraph' },
+                            { model: 'heading1', view: 'h1', title: 'Título 1 (H1)', class: 'ck-heading_heading1' },
+                            { model: 'heading2', view: 'h2', title: 'Título 2 (H2)', class: 'ck-heading_heading2' },
+                            { model: 'heading3', view: 'h3', title: 'Título 3 (H3)', class: 'ck-heading_heading3' },
+                            { model: 'heading4', view: 'h4', title: 'Título 4 (H4)', class: 'ck-heading_heading4' },
+                            { model: 'heading5', view: 'h5', title: 'Título 5 (H5)', class: 'ck-heading_heading5' },
+                            { model: 'heading6', view: 'h6', title: 'Título 6 (H6)', class: 'ck-heading_heading6' }
                           ]
                         },
                         table: {
@@ -1965,6 +2079,69 @@
       }
     }
 
+    // Variáveis para controle do editor HTML
+    let currentEditingBlock = null;
+
+    // Abrir modal de edição de HTML
+    function openHtmlEditor(containerIdx, colIdx, blockIdx) {
+      currentEditingBlock = { containerIdx, colIdx, blockIdx };
+      const block = containers[containerIdx].blocks[colIdx][blockIdx];
+      
+      const modal = document.getElementById('htmlEditorModal');
+      const textarea = document.getElementById('htmlEditorTextarea');
+      
+      // Pegar o conteúdo do editor CKEditor se existir
+      const editorId = `quill-${containerIdx}-${colIdx}-${blockIdx}`;
+      if (ckEditorInstances[editorId]) {
+        textarea.value = ckEditorInstances[editorId].getData();
+      } else {
+        textarea.value = block.content || '';
+      }
+      
+      modal.classList.add('show');
+    }
+
+    // Fechar modal de edição de HTML
+    function closeHtmlEditor() {
+      const modal = document.getElementById('htmlEditorModal');
+      modal.classList.remove('show');
+      currentEditingBlock = null;
+    }
+
+    // Salvar HTML editado
+    function saveHtmlEditor() {
+      if (!currentEditingBlock) return;
+      
+      const { containerIdx, colIdx, blockIdx } = currentEditingBlock;
+      const textarea = document.getElementById('htmlEditorTextarea');
+      const newHtml = textarea.value;
+      
+      // Atualizar no array de containers
+      containers[containerIdx].blocks[colIdx][blockIdx].content = newHtml;
+      
+      // Atualizar no CKEditor se existir
+      const editorId = `quill-${containerIdx}-${colIdx}-${blockIdx}`;
+      if (ckEditorInstances[editorId]) {
+        ckEditorInstances[editorId].setData(newHtml);
+      }
+      
+      // Fechar modal
+      closeHtmlEditor();
+      
+      // Atualizar preview
+      renderPreview();
+      
+      // Feedback visual
+      alert('HTML atualizado com sucesso!');
+    }
+
+    // Fechar modal ao clicar fora dele
+    document.addEventListener('click', function(event) {
+      const modal = document.getElementById('htmlEditorModal');
+      if (event.target === modal) {
+        closeHtmlEditor();
+      }
+    });
                    
       
       // Carregar projeto automaticamente ao iniciar (se existir)
